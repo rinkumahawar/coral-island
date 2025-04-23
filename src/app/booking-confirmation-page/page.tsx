@@ -17,6 +17,35 @@ import ImportantInformation from '@/components/booking/ImportantInformation';
 
 const BookingConfirmationPage: React.FC = () => {
     const [showPrintView, setShowPrintView] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
+
+    const handleLogin = () => {
+        setIsLoggedIn(true);
+        // Add your login logic here
+    };
+
+    const handleLogout = () => {
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+    };
+
+    const handleShowProfileModal = () => {
+        // Add your profile modal logic here
+    };
+
+    const handleShowPasswordModal = () => {
+        // Add your password modal logic here
+    };
+
+    const handleShowBookingsModal = () => {
+        // Add your bookings modal logic here
+    };
+
+    const handleShowPackageModal = () => {
+        // Add your package modal logic here
+    };
+
     // Booking details
     const bookingDetails = {
         reference: "CORAL-25042-8X7Y",
@@ -64,7 +93,16 @@ const BookingConfirmationPage: React.FC = () => {
     ];
     return (
         <div className="min-h-screen bg-gray-50">
-            <Header />
+            <Header 
+                isLoggedIn={isLoggedIn}
+                currentUser={currentUser}
+                onLogin={handleLogin}
+                onLogout={handleLogout}
+                onShowProfileModal={handleShowProfileModal}
+                onShowPasswordModal={handleShowPasswordModal}
+                onShowBookingsModal={handleShowBookingsModal}
+                onShowPackageModal={handleShowPackageModal}
+            />
             <main className="container mx-auto px-6 py-8">
                 <ProgressBar steps={steps} currentStep={3} />
                 <BookingConfirmationHeader
