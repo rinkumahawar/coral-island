@@ -342,9 +342,26 @@ const App: React.FC = () => {
   const prevTestimonial = () => {
     setCurrentTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
   };
+
+  // Add state and handlers for Header props
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const handleLogin = () => setIsLoggedIn(true);
+  const handleLogout = () => { setIsLoggedIn(false); setCurrentUser(null); };
+  const noop = () => {};
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Header
+        isLoggedIn={isLoggedIn}
+        currentUser={currentUser}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
+        onShowProfileModal={noop}
+        onShowPasswordModal={noop}
+        onShowBookingsModal={noop}
+        onShowPackageModal={noop}
+      />
       <HeroSection />
       
       {/* Featured Tour Packages Section */}

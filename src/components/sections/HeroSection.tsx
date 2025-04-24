@@ -21,7 +21,7 @@ const HeroSection: React.FC = () => {
               Book Your Tour
             </Button>
             <Button
-              variant="transparent"
+              transparent
               size="md"
             >
               View Tour Packages
