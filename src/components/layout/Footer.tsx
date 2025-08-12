@@ -1,11 +1,7 @@
-import React from 'react';
+ import React from 'react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
-  faFacebookF, 
-  faInstagram, 
-  faTwitter, 
-  faYoutube,
   faCcVisa,
   faCcMastercard,
   faCcAmex,
@@ -60,7 +56,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Newsletter & Payment */}
+          {/* Payment Methods */}
           <div>
             <h3 className="text-base md:text-lg font-semibold mb-2 md:mb-4">We Accept</h3>
             <div className="flex flex-wrap gap-2 md:gap-3">
@@ -74,7 +70,7 @@ const Footer: React.FC = () => {
 
         {/* Footer Bottom */}
         <div className="border-t border-blue-800 mt-6 md:mt-10 pt-4 md:pt-6 text-center text-blue-300">
-          <p className="text-xs md:text-sm">© {new Date().getFullYear()} Coral Island Pattaya. All rights reserved.</p>
+          <p className="text-xs md:text-sm">© 2025 Coral Island Pattaya. All rights reserved.</p>
           <div className="mt-2 space-x-2 md:space-x-4 text-xs md:text-sm">
             <Link href="/terms" className="hover:text-white transition cursor-pointer">Terms & Conditions</Link>
             <Link href="/privacy" className="hover:text-white transition cursor-pointer">Privacy Policy</Link>
