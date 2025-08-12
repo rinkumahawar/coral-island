@@ -161,7 +161,6 @@ const TicketCard: React.FC<{ ticket: TicketData }> = ({ ticket }) => {
                 </div>
                 
                 {/* Read More button after both sections */}
-                {((ticket.include && ticket.include.length > 3) || (ticket.exclude && ticket.exclude.length > 3)) && (
                   <div className="w-full sm:max-w-lg flex justify-end mt-1">
                     <button 
                       onClick={openModal}
@@ -171,7 +170,6 @@ const TicketCard: React.FC<{ ticket: TicketData }> = ({ ticket }) => {
                       Read More
                     </button>
                   </div>
-                )}
               </div>
             </div>
             
