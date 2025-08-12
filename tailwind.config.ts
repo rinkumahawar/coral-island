@@ -9,6 +9,12 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'geist-sans': ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
+        'geist-mono': ['var(--font-geist-mono)', 'monospace'],
+        'sans': ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
+        'mono': ['var(--font-geist-mono)', 'monospace'],
+      },
       spacing: {
         '0': '0',
         '1': '0.25rem',

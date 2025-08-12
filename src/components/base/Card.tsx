@@ -37,12 +37,14 @@ const Card: React.FC<CardProps> = ({
       onClick={onClick}
     >
       {(title || subtitle) && (
-        <div className="p-4">
-          {title && <h2 className="text-lg font-bold">{title}</h2>}
-          {subtitle && <p className="text-sm text-gray-600">{subtitle}</p>}
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100">
+          {title && <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-800">{title}</h2>}
+          {subtitle && <p className="text-xs sm:text-sm lg:text-base text-gray-600 mt-1">{subtitle}</p>}
         </div>
       )}
-      {children}
+      <div className="p-4 sm:p-6">
+        {children}
+      </div>
     </div>
   );
 };

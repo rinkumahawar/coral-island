@@ -1,0 +1,224 @@
+import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faTicket, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import { EventData, TicketData, TicketService } from '@/lib/api/services/ticket';
+import { ApiError } from '@/lib/api/types';
+import Script from 'next/script';
+
+// Required for static export compatibility
+export async function generateStaticParams() {
+  // Return empty array - pages will be generated on-demand
+  return [];
+}
+
+interface TicketCardProps {
+  ticket: TicketData;
+}
+
+const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
+  const basePrice = parseFloat(ticket.price);
+  const salePrice = parseFloat(ticket.sale_price);
+  const hasDiscount = salePrice < basePrice;
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+      {/* Image */}
+      <div className="relative h-48 bg-gray-200">
+        {ticket.image?.file_path && (
+          <img
+            src={ticket.image.file_path}
+            alt={ticket.title}
+            className="w-full h-full object-cover"
+          />
+        )}
+        {hasDiscount && (
+          <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+            SALE
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">{ticket.title}</h3>
+        
+        {ticket.short_desc && (
+          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{ticket.short_desc}</p>
+        )}
+
+        {/* Price */}
+        <div className="mb-4">
+          {hasDiscount ? (
+            <div className="flex items-center space-x-2">
+              <span className="text-lg font-bold text-red-600">฿{salePrice.toLocaleString()}</span>
+              <span className="text-sm text-gray-500 line-through">฿{basePrice.toLocaleString()}</span>
+            </div>
+          ) : (
+            <span className="text-lg font-bold text-gray-800">฿{basePrice.toLocaleString()}</span>
+          )}
+        </div>
+
+        {/* Buttons */}
+        <div className="flex space-x-2">
+          <Link
+            href={`/tickets/${ticket.slug}`}
+            className="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium flex items-center justify-center"
+          >
+            <FontAwesomeIcon icon={faEye} className="mr-1" />
+            View Details
+          </Link>
+          <Link
+            href={`/booking/${ticket.slug}`}
+            className="flex-1 bg-blue-600 text-white py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium flex items-center justify-center"
+          >
+            <FontAwesomeIcon icon={faTicket} className="mr-1" />
+            Book Now
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const TicketsPage: React.FC = async () => {
+  let eventData: EventData | null = null;
+  let ticketsData: TicketData[] = [];
+  let error: string | null = null;
+
+  try {
+    const response = await TicketService.getEventTickets();
+    eventData = response.event;
+    ticketsData = response.tickets;
+  } catch (err: any) {
+    if (err instanceof ApiError) {
+      error = err.message;
+    } else {
+      error = 'An unexpected error occurred';
+    }
+  }
+
+
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Something went wrong</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Structured Data Schema */}
+      <Script
+        id="tickets-collection-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": `${eventData?.title || process.env.NEXT_PUBLIC_PAGE_NAME}`,
+            "description": eventData?.seo_data?.seo_desc,
+            "url": `${process.env.NEXT_PUBLIC_SITE_URL}/tickets`,
+            "numberOfItems": ticketsData.length,
+            "itemListElement": ticketsData.map((ticket, index) => ({
+              "@type": "ListItem",
+              "position": index + 1,
+              "item": {
+                "@type": "Product",
+                "name": ticket.seo_data?.seo_title || ticket.title,
+                "description": ticket.seo_data?.seo_desc,
+                "image": ticket.image?.file_path,
+                "url": `${process.env.NEXT_PUBLIC_SITE_URL}/tickets/${ticket.slug}`,
+                "offers": {
+                  "@type": "Offer",
+                  "price": ticket.sale_price || ticket.price,
+                  "priceCurrency": "THB",
+                  "availability": "https://schema.org/InStock"
+                },
+                "category": "Event Ticket",
+                "brand": {
+                  "@type": "Brand",
+                  "name": process.env.NEXT_PUBLIC_PAGE_NAME
+                }
+              }
+            }))
+          })
+        }}
+      />
+
+      {/* Breadcrumb Schema */}
+      <Script
+        id="breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": `${process.env.NEXT_PUBLIC_SITE_URL}`
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Tickets",
+                "item": `${process.env.NEXT_PUBLIC_SITE_URL}/tickets`
+              }
+            ]
+          })
+        }}
+      />
+
+      <Header breadcrumbs={[
+        { label: 'Tickets' },
+      ]} />
+      
+      <main className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            {eventData?.title || 'Available Tickets'}
+          </h1>
+          <p className="text-gray-600">Choose your perfect experience</p>
+        </div>
+
+        {/* Tickets Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {ticketsData.map((ticket) => (
+            <TicketCard
+              key={ticket.id}
+              ticket={ticket}
+            />
+          ))}
+        </div>
+
+        {ticketsData.length === 0 && (
+          <div className="text-center py-12">
+            <FontAwesomeIcon icon={faExclamationCircle} className="text-gray-400 text-4xl mb-4" />
+            <p className="text-gray-600">No tickets available at the moment.</p>
+          </div>
+        )}
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default TicketsPage;

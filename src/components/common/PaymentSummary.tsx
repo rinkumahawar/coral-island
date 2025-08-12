@@ -25,7 +25,7 @@ interface PaymentSummaryProps {
   addOns?: AddOnItem[];
   totalAmount: number;
   paymentMethod?: string;
-  paymentStatus?: 'completed' | 'pending' | 'failed';
+  paymentStatus?: 'paid' | 'unpaid' | 'failed'; // 'paid' | 'unpaid' | 'failed' ;
   currency?: string;
 }
 
@@ -34,14 +34,14 @@ const PaymentSummary: React.FC<PaymentSummaryProps> = ({
   addOns = [],
   totalAmount,
   paymentMethod,
-  paymentStatus = 'completed',
+  paymentStatus = 'paid',
   currency = '฿'
 }) => {
   const getStatusColor = () => {
     switch (paymentStatus) {
-      case 'completed':
+      case 'paid':
         return 'text-green-500';
-      case 'pending':
+      case 'unpaid':
         return 'text-yellow-500';
       case 'failed':
         return 'text-red-500';
@@ -52,9 +52,9 @@ const PaymentSummary: React.FC<PaymentSummaryProps> = ({
 
   const getStatusIcon = () => {
     switch (paymentStatus) {
-      case 'completed':
+      case 'paid':
         return faCheckCircle;
-      case 'pending':
+      case 'unpaid':
         return faClock;
       case 'failed':
         return faTimesCircle;

@@ -1,6 +1,6 @@
+'use client';
+
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQuoteRight, faStar, faStarHalfAlt } from '@fortawesome/free-solid-svg-icons';
 
 interface TestimonialCardProps {
   name: string;
@@ -20,34 +20,29 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
   image
 }) => {
   return (
-    <div className="bg-white rounded-lg shadow-lg p-8 relative">
-      <div className="absolute top-4 right-4 text-blue-600">
-        <FontAwesomeIcon icon={faQuoteRight} className="text-4xl opacity-20" />
-      </div>
-      <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-        <div className="flex-shrink-0">
-          <img
-            src={image}
-            alt={name}
-            className="w-20 h-20 rounded-full object-cover"
-          />
-        </div>
+    <div className="bg-white rounded-lg shadow-md p-8">
+      <div className="flex items-center mb-6">
+        <img
+          src={image}
+          alt={name}
+          className="w-16 h-16 rounded-full object-cover mr-4"
+        />
         <div>
-          <div className="text-yellow-400 flex mb-2">
-            {[...Array(5)].map((_, i) => (
-              <FontAwesomeIcon 
-                key={i} 
-                icon={i >= rating ? faStarHalfAlt : faStar} 
-                className="mr-1"
-              />
-            ))}
-          </div>
-          <p className="text-gray-600 italic mb-4">{text}</p>
-          <div>
-            <p className="font-bold text-gray-800">{name}</p>
-            <p className="text-gray-500 text-sm">{country} • {packageName}</p>
-          </div>
+          <h3 className="text-xl font-bold text-gray-800">{name}</h3>
+          <p className="text-gray-600">{country}</p>
         </div>
+      </div>
+      <div className="flex mb-4">
+        {[...Array(5)].map((_, index) => (
+          <i
+            key={index}
+            className={`fas fa-star ${index < rating ? 'text-yellow-400' : 'text-gray-300'}`}
+          ></i>
+        ))}
+      </div>
+      <p className="text-gray-600 mb-4">{text}</p>
+      <div className="bg-blue-50 rounded-lg p-3 inline-block">
+        <span className="text-blue-600 font-semibold">{packageName}</span>
       </div>
     </div>
   );

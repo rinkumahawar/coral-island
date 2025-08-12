@@ -44,26 +44,26 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   const progressWidth = `${(currentStep / (steps.length - 1)) * 100}%`;
 
   return (
-    <div className={`mb-10 ${className}`}>
+    <div className={`mb-6 md:mb-10 ${className}`}>
       <div className="flex justify-between mb-2">
         {steps.map((step, index) => {
           const style = getStepStyle(step.status);
           return (
             <div key={index} className="text-center flex-1">
-              <div className={`w-10 h-10 mx-auto rounded-full ${style.circle} flex items-center justify-center`}>
+              <div className={`w-6 h-6 md:w-10 md:h-10 mx-auto rounded-full ${style.circle} flex items-center justify-center`}>
                 {step.status === 'completed' && style.icon ? (
-                  <FontAwesomeIcon icon={style.icon} />
+                  <FontAwesomeIcon icon={style.icon} className="text-xs md:text-sm" />
                 ) : (
-                  <span className="font-semibold">{index + 1}</span>
+                  <span className="font-semibold text-xs md:text-sm">{index + 1}</span>
                 )}
               </div>
-              <p className={`mt-2 text-sm font-medium ${style.text}`}>{step.label}</p>
+              <p className={`mt-1 md:mt-2 text-xs md:text-sm font-medium ${style.text}`}>{step.label}</p>
             </div>
           );
         })}
       </div>
       <div className="relative pt-1">
-        <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+        <div className="overflow-hidden h-1.5 md:h-2 text-xs flex rounded bg-gray-200">
           <div 
             className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-600 transition-all duration-300 ease-in-out"
             style={{ width: progressWidth }}

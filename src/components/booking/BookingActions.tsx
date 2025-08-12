@@ -31,42 +31,11 @@ const BookingActions: React.FC<BookingActionsProps> = ({
         className="rounded-full"
         variant="primary"
         size="md"
-        onClick={onDownloadReceipt}
-        icon={<FontAwesomeIcon icon={faDownload} className="mr-2" />}
-      >
-        Download Receipt
-      </Button>
-      <Button
-        className="rounded-full"
-        variant="success"
-        size="md"
         onClick={onDownloadVoucher}
         icon={<FontAwesomeIcon icon={faTicketAlt} className="mr-2" />}
       >
         Download Voucher
       </Button>
-      <div className="flex gap-4">
-        <Button
-          variant="primary"
-          transparent={true}
-          size="md"
-          onClick={onPrintReceipt}
-          icon={<FontAwesomeIcon icon={faPrint} className="mr-2" />}
-          className="rounded-full border-2 border-blue-600 text-blue-600"
-        >
-          Print Receipt
-        </Button>
-        <Button
-          variant="secondary"
-          transparent={true}
-          size="md"
-          onClick={onPrintVoucher}
-          icon={<FontAwesomeIcon icon={faTicketAlt} className="mr-2" />}
-          className="rounded-full border-2 border-orange-500 text-orange-500"
-        >
-          Print Voucher
-        </Button>
-      </div>
       <Button
         variant="success"
         size="md"
