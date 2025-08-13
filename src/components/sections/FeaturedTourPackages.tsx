@@ -10,6 +10,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import TicketDetails from './TicketDetails';
 import '../../styles/html-content.css';
 import { TicketData } from '@/lib/api/services/ticket';
+import { formatMoney } from '@/lib/money-format';
 
 
 
@@ -198,10 +199,10 @@ const TicketCard: React.FC<{ ticket: TicketData }> = ({ ticket }) => {
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col items-start sm:items-end">
                         <span className="text-xs lg:text-sm text-gray-400 line-through">
-                          ฿{ticket.price}
+                          {formatMoney(Number(ticket.price))}
                         </span>
                         <span className="text-xl lg:text-2xl font-bold text-green-600">
-                          ฿{ticket.sale_price}
+                          {formatMoney(Number(ticket.sale_price))}
                         </span>
                       </div>
                     </div>
@@ -209,7 +210,7 @@ const TicketCard: React.FC<{ ticket: TicketData }> = ({ ticket }) => {
                   {(!ticket.sale_price || ticket.price === ticket.sale_price) && (
                     <div className="flex items-baseline gap-2">
                       <span className="text-xl lg:text-2xl font-bold text-blue-600">
-                        ฿{ticket.price}
+                        {formatMoney(Number(ticket.price))}
                       </span>
                       <span className="text-xs text-gray-500">per person</span>
                     </div>

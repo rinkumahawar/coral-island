@@ -1,6 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMinus, faCheck, faClock } from '@fortawesome/free-solid-svg-icons';
+import { formatMoney } from '@/lib/money-format';
 
 interface ExtraPrice {
     name: string;
@@ -55,7 +56,7 @@ const AddOnSelection: React.FC<AddOnSelectionProps> = ({
                                     onAddonToggle(addon.name);
                                 }
                             }}
-                        >
+                        >   
                             {/* Mobile: Horizontal Layout, Desktop: Vertical Layout */}
                             <div className="flex sm:flex-col">
                                 {/* Image - Small on mobile, full width on desktop */}
@@ -93,7 +94,7 @@ const AddOnSelection: React.FC<AddOnSelectionProps> = ({
                                     <div className="flex items-center justify-between">
                                         {/* Left Column - Price */}
                                         <div className="text-blue-600 font-bold text-xs sm:text-sm">
-                                            ฿{addon.price.toLocaleString()}
+                                            {formatMoney(Number(addon.price))}
                                         </div>
                                         
                                         {/* Right Column - Quantity Controller */}

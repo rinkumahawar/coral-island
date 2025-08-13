@@ -8,6 +8,7 @@ import {
   faPlus,
   faCreditCard
 } from '@fortawesome/free-solid-svg-icons';
+import { formatMoney } from '@/lib/money-format';
 
 interface PaymentItem {
   name: string;
@@ -72,7 +73,7 @@ const PaymentSummary: React.FC<PaymentSummaryProps> = ({
         {items.map((item, index) => (
           <div key={index} className="flex justify-between">
             <span className="text-gray-600">{item.name}:</span>
-            <span className="font-medium">{item.quantity} × {currency}{item.price.toLocaleString()}</span>
+            <span className="font-medium">{item.quantity} × {formatMoney(Number(item.price))}</span>
           </div>
         ))}
         
@@ -87,7 +88,7 @@ const PaymentSummary: React.FC<PaymentSummaryProps> = ({
               {addOns.map((addon, index) => (
                 <li key={index} className="flex justify-between">
                   <span className="text-gray-600">- {addon.name}</span>
-                  <span className="font-medium">{currency}{addon.price.toLocaleString()}</span>
+                  <span className="font-medium">{formatMoney(Number(addon.price))}</span>
                 </li>
               ))}
             </ul>
@@ -99,7 +100,7 @@ const PaymentSummary: React.FC<PaymentSummaryProps> = ({
       <div className="border-t border-gray-200 pt-4 mb-6">
         <div className="flex justify-between items-center">
           <span className="text-lg font-semibold text-gray-800">Total Paid:</span>
-          <span className="text-xl font-bold text-green-600">{currency}{totalAmount.toLocaleString()}</span>
+          <span className="text-xl font-bold text-green-600">{formatMoney(Number(totalAmount))}</span>
         </div>
         
         {paymentMethod && (

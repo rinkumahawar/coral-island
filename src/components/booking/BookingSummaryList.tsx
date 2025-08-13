@@ -1,6 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { formatMoney } from '@/lib/money-format';
 
 interface ExtraPrice {
     name: string;
@@ -110,12 +111,12 @@ const BookingSummaryList: React.FC<BookingSummaryListProps> = ({
                 </div>
                 <div className="flex justify-between">
                     <span className="text-xs sm:text-base text-gray-600">Adults:</span>
-                    <span className="text-xs sm:text-base font-medium">{adultCount || 0} × ฿{(selectedTicket?.adult_price || 0).toLocaleString()}</span>
+                    <span className="text-xs sm:text-base font-medium">{adultCount || 0} × {formatMoney(Number(selectedTicket?.adult_price))}</span>
                 </div>
                 {childCount > 0 && (
                     <div className="flex justify-between">
                         <span className="text-xs sm:text-base text-gray-600">Children:</span>
-                        <span className="text-xs sm:text-base font-medium">{childCount} × ฿{(selectedTicket?.child_price || 0).toLocaleString()}</span>
+                        <span className="text-xs sm:text-base font-medium">{childCount} × {formatMoney(Number(selectedTicket?.child_price))}</span>
                     </div>
                 )}
                 {addons.some(addon => addon.selected) && ( 
@@ -125,7 +126,7 @@ const BookingSummaryList: React.FC<BookingSummaryListProps> = ({
                             {addons.filter(addon => addon.selected).map(addon => (
                                 <li key={addon.name} className="flex justify-between">
                                     <span className="text-xs sm:text-base text-gray-600">- {addon.name} (x{addon.quantity || 0})</span>
-                                    <span className="text-xs sm:text-base font-medium">฿{((addon.price || 0) * (addon.quantity || 0)).toLocaleString()}</span>
+                                    <span className="text-xs sm:text-base font-medium">{formatMoney(Number((addon.price || 0) * (addon.quantity || 0)))}</span>
                                 </li>
                             ))}
                         </ul>
@@ -136,17 +137,17 @@ const BookingSummaryList: React.FC<BookingSummaryListProps> = ({
                 <div className="space-y-1 sm:space-y-2 mb-3 sm:mb-6">
                     <div className="flex justify-between items-center">
                         <span className="text-sm sm:text-lg text-gray-800">Subtotal:</span>
-                        <span className="text-sm sm:text-lg text-gray-800">฿{subtotal.toLocaleString()}</span>
+                        <span className="text-sm sm:text-lg text-gray-800">{formatMoney(Number(subtotal))}</span>
                     </div>
                     {couponDiscount > 0 && (
                         <div className="flex justify-between items-center text-green-600">
                             <span className="text-xs sm:text-base">Discount:</span>
-                            <span className="text-xs sm:text-base">-฿{couponDiscount.toLocaleString()}</span>
+                            <span className="text-xs sm:text-base">- {formatMoney(Number(couponDiscount))}</span>
                         </div>
                     )}
                     <div className="flex justify-between items-center pt-1 sm:pt-2 border-t">
                         <span className="text-base sm:text-lg font-semibold text-gray-800">Total:</span>
-                        <span className="text-lg sm:text-xl font-bold text-blue-600">฿{(subtotal - (couponDiscount || 0)).toLocaleString()}</span>
+                        <span className="text-lg sm:text-xl font-bold text-blue-600">{formatMoney(Number(subtotal - (couponDiscount || 0)))}</span>
                     </div>
                 </div>
             </div>

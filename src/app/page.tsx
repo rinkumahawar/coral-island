@@ -14,7 +14,7 @@ import EventCustomerReviews from '../components/sections/EventCustomerReviews';
 import EventReviewStats from '../components/sections/EventReviewStats';
 import { Metadata } from 'next';
 import AboutSection from '@/components/sections/AboutSection';
-import BookingCTA from '../components/sections/BookingCTA';
+import BookingCTA from '@/components/sections/BookingCTA';
 import Script from 'next/script';
 
 // Generate metadata for SEO - this runs on the server

@@ -9,6 +9,7 @@ import { TicketData, TicketService } from '@/lib/api/services/ticket';
 import { ApiError } from '@/lib/api/types';
 import Link from 'next/link';
 import Script from 'next/script';
+import { formatMoney } from '@/lib/money-format';
 
 // Required for static export with dynamic routes
 export async function generateStaticParams() {
@@ -238,20 +239,20 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
             <div className="flex flex-row justify-between items-center">
               {/* Ticket Price Display */}
               <div className="flex flex-col items-start">
-                <span className="text-xs text-gray-600">Ticket Price</span>
+                <span className="text-sm text-gray-600">Ticket Price</span>
                 {hasDiscount ? (
                   <div className="flex items-center space-x-1 sm:space-x-2">
-                    <span className="text-base sm:text-lg font-bold text-red-600">฿{salePrice.toLocaleString()}</span>
-                    <span className="text-xs sm:text-sm text-gray-500 line-through">฿{basePrice.toLocaleString()}</span>
+                      <span className="text-lg font-bold text-red-600">{formatMoney(Number(salePrice))}</span>
+                    <span className="text-sm sm:text-sm text-gray-500 line-through">{formatMoney(Number(basePrice))}</span>
                   </div>
                 ) : (
-                  <span className="text-base sm:text-lg font-bold text-gray-800">฿{basePrice.toLocaleString()}</span>
+                  <span className="text-lg font-bold text-gray-800">{formatMoney(Number(basePrice))}</span>  
                 )}
               </div>
 
               <Link
                 href={`/booking/${ticket.slug}`}
-                className="px-3 sm:px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors text-xs sm:text-sm"
+                className="px-10 sm:px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors text-base sm:text-base"
               >
                 <FontAwesomeIcon icon={faTicket} className="mr-1 sm:mr-2" />
                 Book Now

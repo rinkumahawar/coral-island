@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer';
 import { EventData, TicketData, TicketService } from '@/lib/api/services/ticket';
 import { ApiError } from '@/lib/api/types';
 import Script from 'next/script';
+import { formatMoney } from '@/lib/money-format';
 
 // Required for static export compatibility
 export async function generateStaticParams() {
@@ -58,11 +59,11 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
         <div className="mb-4">
           {hasDiscount ? (
             <div className="flex items-center space-x-2">
-              <span className="text-lg font-bold text-red-600">฿{salePrice.toLocaleString()}</span>
-              <span className="text-sm text-gray-500 line-through">฿{basePrice.toLocaleString()}</span>
+              <span className="text-lg font-bold text-red-600">{formatMoney(Number(salePrice))}</span>
+              <span className="text-sm text-gray-500 line-through">{formatMoney(Number(basePrice))}</span>
             </div>
           ) : (
-            <span className="text-lg font-bold text-gray-800">฿{basePrice.toLocaleString()}</span>
+            <span className="text-lg font-bold text-gray-800">{formatMoney(Number(basePrice))}</span>
           )}
         </div>
 

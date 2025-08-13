@@ -49,7 +49,7 @@ const PaymentReturnContent = () => {
 
   const handleContinue = () => {
     // Redirect to booking confirmation page instead of home
-    router.push('/booking-confirmation-page?code=' + bookingCode || '');
+            router.push('/booking-confirmation?code=' + bookingCode || '');
   };
 
   const handleRetry = () => {
