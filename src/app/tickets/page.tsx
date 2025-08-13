@@ -27,11 +27,13 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
       {/* Image */}
       <div className="relative h-48 bg-gray-200">
         {ticket.image?.file_path && (
-          <img
-            src={ticket.image.file_path}
-            alt={ticket.title}
-            className="w-full h-full object-cover"
-          />
+          <a href={`/tickets/${ticket.slug}`} className="block w-full h-full">
+            <img
+              src={ticket.image.file_path}
+              alt={ticket.title}
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            />
+          </a>
         )}
         {hasDiscount && (
           <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
@@ -42,7 +44,11 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
 
       {/* Content */}
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">{ticket.title}</h3>
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          <a href={`/tickets/${ticket.slug}`} className="hover:text-blue-600 transition-colors cursor-pointer">
+            {ticket.title}
+          </a>
+        </h3>
         
         {ticket.short_desc && (
           <p className="text-gray-600 text-sm mb-3 line-clamp-2">{ticket.short_desc}</p>

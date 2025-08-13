@@ -150,7 +150,7 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
       <Header breadcrumbs={[
         { label: 'Tickets', href: '/tickets' },
         { label: ticket.title }
-      ]} />
+      ]} title={ticket.title || ''} />
       
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 pb-24 sm:pb-32 flex-1">
 

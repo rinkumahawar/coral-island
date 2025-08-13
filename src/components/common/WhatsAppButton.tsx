@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 
 interface WhatsAppButtonProps {
   phoneNumber: string;
@@ -9,7 +11,7 @@ interface WhatsAppButtonProps {
 
 const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({ 
   phoneNumber, 
-  message = "Hello! I'm interested in your tours." 
+  message = `Hello! I'm interested in ${process.env.NEXT_PUBLIC_PAGE_NAME}.` 
 }) => {
   const handleClick = () => {
     const encodedMessage = encodeURIComponent(message);
@@ -24,7 +26,7 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
         className="bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all cursor-pointer"
         aria-label="Contact us on WhatsApp"
       >
-        <i className="fab fa-whatsapp text-2xl"></i>
+        <FontAwesomeIcon icon={faWhatsapp} className="text-2xl" />
       </button>
     </div>
   );

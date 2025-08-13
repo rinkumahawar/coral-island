@@ -17,9 +17,11 @@ interface BreadcrumbItem {
 
 interface HeaderProps {
     breadcrumbs?: BreadcrumbItem[];
+    title?: string;
+    description?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ breadcrumbs = [] }) => {
+const Header: React.FC<HeaderProps> = ({ breadcrumbs = [], title, description }) => {
     return (
         <header className="relative">
             <div className="absolute inset-0 z-0">
@@ -30,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ breadcrumbs = [] }) => {
                     <div className="flex items-center w-full md:w-auto justify-between">
                         <BackButton />
                         <Link href="/" className="hover:opacity-90 transition-opacity">
-                            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{process.env.NEXT_PUBLIC_PAGE_NAME}</h1>
+                            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{ process.env.NEXT_PUBLIC_PAGE_NAME}</div>
                         </Link>
                         <div className="w-8 md:hidden"></div> {/* Spacer for mobile layout */}
                     </div>
@@ -38,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ breadcrumbs = [] }) => {
 
                 <div className="container mx-auto px-4 sm:px-6 py-6 md:py-16">
                     <div className="max-w-2xl">
-                        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white">{process.env.NEXT_PUBLIC_PAGE_DESCRIPTION}</h2>
+                        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white">{title || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION}</h1>
                          
                         <div className="mt-6 md:mt-8 flex flex-wrap gap-3 md:gap-6">
                             <div className="flex items-center text-white">

@@ -72,11 +72,13 @@ const TicketCard: React.FC<{ ticket: TicketData }> = ({ ticket }) => {
         <div className="flex flex-col lg:flex-row">
           {/* Image Section */}
           <div className="w-full lg:w-1/3 h-48 lg:h-60 overflow-hidden p-0 relative">
-            <img
-              src={ticket.image?.file_path || '/images/banner.jpg'}
-              alt={ticket.title}
-              className="w-full h-full object-cover"
-            />
+            <a href={`/tickets/${ticket.slug}`} className="block w-full h-full">
+              <img
+                src={ticket.image?.file_path || '/images/banner.jpg'}
+                alt={ticket.title}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              />
+            </a>
             {ticket.price && ticket.sale_price && ticket.price !== ticket.sale_price && (
               <div className="absolute top-2 left-2 z-10">
                 <span className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-2 py-1 lg:px-3 lg:py-1 rounded-full text-xs lg:text-sm font-bold shadow-lg">

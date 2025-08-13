@@ -8,7 +8,7 @@ interface EventGalleryProps {
 }
 
 const EventGallery: React.FC<EventGalleryProps> = ({ gallery }) => (
-  <Card title="Event Gallery" className="mb-8">
+  <Card title="Event Gallery" className="mb-8" id="gallery">
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {gallery.length > 0 ? gallery.map((img, idx) => (
         <div key={idx} className="aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">

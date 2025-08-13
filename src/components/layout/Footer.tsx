@@ -20,9 +20,9 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-4">Coral Island Pattaya</h3>
+            <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-4">{process.env.NEXT_PUBLIC_PAGE_NAME}</h3>
             <p className="text-blue-200 mb-3 md:mb-4 text-sm md:text-base">
-              Experience the beauty of Thailand's most stunning island destination with our premium tour packages.
+              {process.env.NEXT_PUBLIC_PAGE_DESCRIPTION}
             </p>
           </div>
 
@@ -32,15 +32,15 @@ const Footer: React.FC = () => {
             <ul className="space-y-2 md:space-y-3 text-blue-200 text-sm md:text-base">
               <li className="flex items-start">
                 <FontAwesomeIcon icon={faMapMarkerAlt} className="mt-1 mr-2 md:mr-3 text-xs md:text-sm flex-shrink-0" />
-                <span className="text-xs md:text-sm">77/7, Bang Lamung District, Chon Buri, Thailand</span>
+                <span className="text-xs md:text-sm">{process.env.NEXT_PUBLIC_COMPANY_ADDRESS}</span>
               </li>
               <li className="flex items-center">
                 <FontAwesomeIcon icon={faPhoneAlt} className="mr-2 md:mr-3 text-xs md:text-sm flex-shrink-0" />
-                <span className="text-xs md:text-sm">+66 90 245 1584</span>
+                <a href={`tel:${process.env.NEXT_PUBLIC_COMPANY_PHONE}`} className="text-xs md:text-sm hover:text-white transition cursor-pointer">{process.env.NEXT_PUBLIC_COMPANY_PHONE}</a>
               </li>
               <li className="flex items-center">
                 <FontAwesomeIcon icon={faEnvelope} className="mr-2 md:mr-3 text-xs md:text-sm flex-shrink-0" />
-                <span className="text-xs md:text-sm">info@coralisland-pattaya.com</span>
+                <a href={`mailto:${process.env.NEXT_PUBLIC_COMPANY_EMAIL}`} className="text-xs md:text-sm hover:text-white transition cursor-pointer">{process.env.NEXT_PUBLIC_COMPANY_EMAIL}</a>
               </li>
             </ul>
           </div>
@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
               <li><Link href="/" className="hover:text-white transition cursor-pointer">Home</Link></li>
               <li><Link href="/tickets" className="hover:text-white transition cursor-pointer">Event Tickets</Link></li>
               <li><Link href="/#about" className="hover:text-white transition cursor-pointer">About Us</Link></li>
-              <li><Link href="#gallery" className="hover:text-white transition cursor-pointer">Gallery</Link></li>
+              <li><Link href="/#gallery" className="hover:text-white transition cursor-pointer">Gallery</Link></li>
             </ul>
           </div>
 
@@ -71,14 +71,8 @@ const Footer: React.FC = () => {
         {/* Footer Bottom */}
         <div className="border-t border-blue-800 mt-6 md:mt-10 pt-4 md:pt-6 text-center text-blue-300">
           <p className="text-xs md:text-sm">© 2025 Coral Island Pattaya. All rights reserved.</p>
-          <div className="mt-2 space-x-2 md:space-x-4 text-xs md:text-sm">
-            <Link href="/terms" className="hover:text-white transition cursor-pointer">Terms & Conditions</Link>
-            <Link href="/privacy" className="hover:text-white transition cursor-pointer">Privacy Policy</Link>
-            <Link href="/refund" className="hover:text-white transition cursor-pointer">Refund Policy</Link>
-          </div>
           <div className="mt-3 md:mt-4 text-xs md:text-sm">
-            <span>Powered by </span>
-            <a href="https://tngholidays.com" target="_blank" className="text-white hover:text-blue-200 transition cursor-pointer">TNG Holidays</a>
+            <span>Powered by <b>TNG Holidays</b></span>
           </div>
         </div>
       </div>

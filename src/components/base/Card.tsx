@@ -8,6 +8,7 @@ interface CardProps {
   children: React.ReactNode;
   onClick?: () => void;
   hoverable?: boolean;
+  id?: string;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -16,6 +17,7 @@ const Card: React.FC<CardProps> = ({
   variant = 'default',
   className = '',
   children,
+  id,
   onClick,
   hoverable = false,
 }) => {
@@ -35,6 +37,7 @@ const Card: React.FC<CardProps> = ({
     <div 
       className={`${baseClasses} ${variantClasses[variant]} ${hoverClass} ${className}`}
       onClick={onClick}
+      id={id}
     >
       {(title || subtitle) && (
         <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100">
