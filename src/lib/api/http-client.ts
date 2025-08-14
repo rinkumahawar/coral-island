@@ -30,6 +30,10 @@ export class HttpClient {
     config: ApiRequestConfig = {}
   ): Promise<ApiResponse<T>> {
     const url = `${API_CONFIG.baseURL}${endpoint}`;
+    console.log(`[HttpClient] baseURL: ${API_CONFIG.baseURL}`);
+    console.log(`[HttpClient] endpoint: ${endpoint}`);
+    console.log(`[HttpClient] full URL: ${url}`);
+    
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
 

@@ -24,36 +24,55 @@ interface PageProps {
 const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
   const { slug } = await params;
   
+  // Validate environment variables
+  if (!process.env.NEXT_PUBLIC_API_BASE_URL) {
+    console.error('Missing NEXT_PUBLIC_API_BASE_URL environment variable');
+    return null;
+  }
+  
   let ticket: TicketData | null = null;
   let error: string | null = null;
 
   try {
+    console.log(`[TicketDetailsPage] Fetching ticket details for slug: ${slug}`);
+    console.log(`[TicketDetailsPage] API Base URL: ${process.env.NEXT_PUBLIC_API_BASE_URL}`);
+    console.log(`[TicketDetailsPage] Full endpoint: ${process.env.NEXT_PUBLIC_API_BASE_URL}/page/tickets/${slug}`);
+    
     const response = await TicketService.getTicketDetails(slug);
-    ticket = response;
+    
+    console.log(`[TicketDetailsPage] Raw API response:`, response);
+    console.log(`[TicketDetailsPage] Response type:`, typeof response);
+    console.log(`[TicketDetailsPage] Response keys:`, response ? Object.keys(response) : 'null/undefined');
+    
+    if (!response) {
+      console.error(`[TicketDetailsPage] TicketService.getTicketDetails returned null/undefined for slug: ${slug}`);
+      error = 'Ticket data not found';
+    } else {
+      console.log(`[TicketDetailsPage] Successfully fetched ticket: ${response.title}`);
+      console.log(`[TicketDetailsPage] Ticket ID:`, response.id);
+      console.log(`[TicketDetailsPage] Ticket slug:`, response.slug);
+      ticket = response;
+    }
   } catch (err: any) {
+    console.error(`[TicketDetailsPage] Error fetching ticket ${slug}:`, err);
+    
     if (err instanceof ApiError) {
       error = err.message;
+    } else if (err.message) {
+      error = `API Error: ${err.message}`;
     } else {
-      error = 'An unexpected error occurred';
+      error = 'An unexpected error occurred while fetching ticket data';
+    }
+    
+    // Log additional error details for debugging
+    if (err.stack) {
+      console.error(`[TicketDetailsPage] Error stack:`, err.stack);
     }
   }
 
   if (error || !ticket) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Ticket not found</h2>
-          <p className="text-gray-600 mb-4">{error || 'The requested ticket could not be found.'}</p>
-          <Link 
-            href="/tickets"
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors inline-block"
-          >
-            Back to Tickets
-          </Link>
-        </div>
-      </div>
-    );
+    console.error(`[TicketDetailsPage] Rendering error page for slug: ${slug}, error: ${error}`);
+    return null;
   }
 
   const basePrice = parseFloat(ticket.price);
