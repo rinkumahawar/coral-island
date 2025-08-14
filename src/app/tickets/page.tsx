@@ -7,6 +7,7 @@ import { EventData, TicketData, TicketService } from '@/lib/api/services/ticket'
 import { ApiError } from '@/lib/api/types';
 import Script from 'next/script';
 import { formatMoney } from '@/lib/money-format';
+import { Metadata } from 'next';
 
 // Force dynamic rendering - disable static generation
 export const dynamic = 'force-dynamic';
@@ -16,6 +17,81 @@ export const revalidate = 0;
 export async function generateStaticParams() {
   // Return empty array - pages will be generated on-demand
   return [];
+}
+
+// Generate metadata for SEO - this runs on the server
+export async function generateMetadata(): Promise<Metadata> { 
+  try {
+    const data = await TicketService.getEventTickets();
+    const { event: eventData, tickets: ticketsData } = data as any;
+    
+    // Parse social media meta data - handle the actual JSON structure
+    let socialData = {
+      facebook: { title: null, desc: null, image: null },
+      twitter: { title: null, desc: null, image: null }
+    };
+    
+    if (eventData?.seo_data?.seo_share) {
+      try {
+        // Handle both string and object formats
+        const shareData = eventData.seo_data.seo_share;
+        socialData = shareData as any;
+      } catch (e) {
+        console.warn('Failed to parse SEO share data:', e);
+      }
+    }
+    
+    // Use meta data from API or fallback to event data
+    const title = process.env.NEXT_PUBLIC_PAGE_NAME + " - Tickets";
+    const description = process.env.NEXT_PUBLIC_PAGE_DESCRIPTION;
+    const image = process.env.NEXT_PUBLIC_LOGO_PATH;
+    
+    return {
+      title: title,
+      description: description,
+      keywords: [
+        'Coral Island',
+        'Pattaya', 
+        'Thailand',
+        'Event Tickets',
+        'Adventure',
+        'Beach Activities',
+        'Island Event',
+        'Event Booking',
+        'Travel',
+        'Vacation',
+        'Ticket Booking'
+      ],
+      openGraph: {
+        title: title,
+        description: description,
+        type: 'website',
+        images: image ? [
+          {
+            url: image,
+            width: 1200,
+            height: 630,
+            alt: title,
+          }
+        ] : [],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: title,
+        description: description,
+        images: process.env.NEXT_PUBLIC_LOGO_PATH ? [process.env.NEXT_PUBLIC_LOGO_PATH] : [],
+      },
+      alternates: {
+        canonical: '/tickets',
+      },
+    };
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return {
+      title: 'Coral Island Event Tickets - Pattaya, Thailand',
+      description: 'Book your tickets for the Coral Island Adventure Event. Choose from our selection of exciting packages and experiences.',
+    };
+  }
 }
 
 interface TicketCardProps {
@@ -192,6 +268,60 @@ const TicketsPage: React.FC = async () => {
                 "item": `${process.env.NEXT_PUBLIC_SITE_URL}/tickets`
               }
             ]
+          })
+        }}
+      />
+
+      {/* FAQ Schema */}
+      {eventData?.faqs && eventData.faqs.length > 0 && (
+        <Script
+          id="faq-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": eventData.faqs.map(faq => ({
+                "@type": "Question",
+                "name": faq.title,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": faq.content.replace(/<[^>]*>/g, '') // Remove HTML tags for clean text
+                }
+              }))
+            })
+          }}
+        />
+      )}
+
+      {/* Organization Schema */}
+      <Script
+        id="organization-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "TouristInformationCenter",
+            "name": eventData?.seo_data?.seo_title || eventData?.title,
+            "description": eventData?.seo_data?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
+            "url": process.env.NEXT_PUBLIC_SITE_URL,
+            "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH || '/images/coralisland/logo.jpg'}`,
+            "image": eventData?.seo_data?.seo_image || '/images/banner.jpg',
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": process.env.NEXT_PUBLIC_PAGE_ADDRESS_LOCALITY,
+              "addressCountry": process.env.NEXT_PUBLIC_PAGE_ADDRESS_COUNTRY,
+              "addressRegion": process.env.NEXT_PUBLIC_PAGE_ADDRESS_REGION
+            },
+            "telephone": process.env.NEXT_PUBLIC_PHONE_NUMBER,
+            "email": process.env.NEXT_PUBLIC_EMAIL,
+            "openingHours": "Mo-Su 08:00-18:00",
+            "priceRange": "฿฿",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "reviewCount": "10000"
+            }
           })
         }}
       />

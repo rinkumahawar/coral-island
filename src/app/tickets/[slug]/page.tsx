@@ -10,6 +10,7 @@ import { ApiError } from '@/lib/api/types';
 import Link from 'next/link';
 import Script from 'next/script';
 import { formatMoney } from '@/lib/money-format';
+import { Metadata } from 'next';
 
 // Force dynamic rendering - disable static generation
 export const dynamic = 'force-dynamic';
@@ -19,6 +20,70 @@ export const revalidate = 0;
 export async function generateStaticParams() {
   // Return empty array - pages will be generated on-demand
   return [];
+}
+
+// Generate metadata for SEO - this runs on the server
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> { 
+  try {
+    const { slug } = await params;
+    const ticket = await TicketService.getTicketDetails(slug);
+    
+    if (!ticket) {
+      return {
+        title: 'Ticket Not Found',
+        description: 'The requested ticket could not be found.',
+      };
+    }
+    
+    // Parse social media meta data - handle the actual JSON structure
+    let socialData = {
+      facebook: { title: null, desc: null, image: null },
+      twitter: { title: null, desc: null, image: null }
+    };
+    
+    if (ticket.seo_data?.seo_share) {
+      try {
+        // Handle both string and object formats
+        const shareData = ticket.seo_data.seo_share;
+        socialData = shareData as any;
+      } catch (e) {
+        console.warn('Failed to parse SEO share data:', e);
+      }
+    }
+    
+    // Use meta data from API or fallback to ticket data
+    const title = ticket.seo_data?.seo_title || ticket.title;
+    const description = ticket.seo_data?.seo_desc || ticket.short_desc;
+    const image = ticket.seo_data?.seo_image || ticket.image?.file_path;
+    
+    return {
+      title: title,
+      description: description,
+      keywords: [
+        'Coral Island',
+        'Pattaya', 
+        'Thailand',
+        'Event Ticket',
+        'Adventure',
+        'Beach Activities',
+        'Island Event',
+        'Event Booking',
+        'Travel',
+        'Vacation',
+        'Ticket Booking',
+        ticket.title
+      ],
+      alternates: {
+        canonical: `/tickets/${ticket.slug}`,
+      },
+    };
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    return {
+      title: 'Coral Island Event Ticket - Pattaya, Thailand',
+      description: 'Book your ticket for the Coral Island Adventure Event. Experience the best of Thailand\'s beautiful island.',
+    };
+  }
 }
 
 interface PageProps {
@@ -145,6 +210,38 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
           }}
         />
       )}
+
+      {/* Organization Schema */}
+      <Script
+        id="organization-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "TouristInformationCenter",
+            "name": ticket.seo_data?.seo_title || ticket.title,
+            "description": ticket.seo_data?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
+            "url": process.env.NEXT_PUBLIC_SITE_URL,
+            "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH || '/images/coralisland/logo.jpg'}`,
+            "image": ticket.seo_data?.seo_image || ticket.image?.file_path || '/images/banner.jpg',
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": process.env.NEXT_PUBLIC_PAGE_ADDRESS_LOCALITY,
+              "addressCountry": process.env.NEXT_PUBLIC_PAGE_ADDRESS_COUNTRY,
+              "addressRegion": process.env.NEXT_PUBLIC_PAGE_ADDRESS_REGION
+            },
+            "telephone": process.env.NEXT_PUBLIC_PHONE_NUMBER,
+            "email": process.env.NEXT_PUBLIC_EMAIL,
+            "openingHours": "Mo-Su 08:00-18:00",
+            "priceRange": "฿฿",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "reviewCount": "10000"
+            }
+          })
+        }}
+      />
 
       <Header breadcrumbs={[
         { label: 'Tickets', href: '/tickets' },
