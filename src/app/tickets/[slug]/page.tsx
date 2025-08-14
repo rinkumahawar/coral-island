@@ -11,6 +11,10 @@ import Link from 'next/link';
 import Script from 'next/script';
 import { formatMoney } from '@/lib/money-format';
 
+// Force dynamic rendering - disable static generation
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Required for static export with dynamic routes
 export async function generateStaticParams() {
   // Return empty array - pages will be generated on-demand

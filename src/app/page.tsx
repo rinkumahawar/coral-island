@@ -17,6 +17,10 @@ import AboutSection from '@/components/sections/AboutSection';
 import BookingCTA from '@/components/sections/BookingCTA';
 import Script from 'next/script';
 
+// Force dynamic rendering - disable static generation
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Generate metadata for SEO - this runs on the server
 export async function generateMetadata(): Promise<Metadata> { 
   try {
@@ -95,6 +99,7 @@ export async function generateMetadata(): Promise<Metadata> {
 // Server-side data fetching
 async function getEventData() {
   try {
+    // Force fresh data on every request
     const data = await EventService.getEventDetails();
     return {
       eventData: data.event,

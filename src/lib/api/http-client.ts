@@ -39,6 +39,9 @@ export class HttpClient {
         ...config,
         signal: controller.signal,
         headers: this.getHeaders(config),
+        // Force no caching for SSR pages
+        cache: 'no-store',
+        next: { revalidate: 0 }
       });
 
       clearTimeout(timeoutId);

@@ -8,6 +8,10 @@ import { ApiError } from '@/lib/api/types';
 import Script from 'next/script';
 import { formatMoney } from '@/lib/money-format';
 
+// Force dynamic rendering - disable static generation
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Required for static export compatibility
 export async function generateStaticParams() {
   // Return empty array - pages will be generated on-demand
