@@ -13,6 +13,7 @@ import { formatMoney } from '@/lib/money-format';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { CardSkeleton } from '@/components/common/SkeletonLoader';
+import Image from 'next/image';
 
 // Enable ISR for better performance - revalidate every 5 minutes
 export const revalidate = 300; // 5 minutes
@@ -21,6 +22,8 @@ export const revalidate = 300; // 5 minutes
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> { 
   try {
     const { slug } = await params;
+    
+    // Fetch ticket data server-side for SEO
     const ticket = await TicketService.getTicketDetails(slug);
     
     if (!ticket) {
@@ -30,29 +33,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       };
     }
     
-    // Parse social media meta data - handle the actual JSON structure
-    let socialData = {
-      facebook: { title: null, desc: null, image: null },
-      twitter: { title: null, desc: null, image: null }
-    };
+
     
-    if (ticket.seo_data?.seo_share) {
-      try {
-        // Handle both string and object formats
-        const shareData = ticket.seo_data.seo_share;
-        socialData = shareData as any;
-      } catch (e) {
-        console.warn('Failed to parse SEO share data:', e);
-      }
-    }
-    
-    // Use meta data from API or fallback to ticket data
-    const title = ticket.seo_data?.seo_title || ticket.title;
-    const description = ticket.seo_data?.seo_desc || ticket.short_desc;
-    const image = ticket.seo_data?.seo_image || ticket.image?.file_path;
+    // Use API data for metadata
+    const title = ticket.seo_data?.seo_title || ticket.title || undefined;
+    const description = ticket.seo_data?.seo_desc || ticket.short_desc || undefined;
+    const image = ticket.seo_data?.seo_image || ticket.image?.file_path || undefined;
     
     return {
-      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://coralislandtour.com'),
+      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
       title: title,
       description: description,
       keywords: [
@@ -69,12 +58,32 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         'Ticket Booking',
         ticket.title
       ],
+      openGraph: {
+        title: title,
+        description: description,
+        type: 'website',
+        images: image ? [
+          {
+            url: image,
+            width: 1200,
+            height: 630,
+            alt: title,
+          }
+        ] : [],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: title,
+        description: description,
+        images: image ? [image] : [],
+      },
       alternates: {
         canonical: `/tickets/${ticket.slug}`,
       },
     };
   } catch (error) {
     console.error('Error generating metadata:', error);
+    // Fallback metadata for build failures
     return {
       title: 'Coral Island Event Ticket - Pattaya, Thailand',
       description: 'Book your ticket for the Coral Island Adventure Event. Experience the best of Thailand\'s beautiful island.',
@@ -218,8 +227,8 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
             "name": ticket.seo_data?.seo_title || ticket.title,
             "description": ticket.seo_data?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
             "url": process.env.NEXT_PUBLIC_SITE_URL,
-            "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH || '/images/coralisland/logo.jpg'}`,
-            "image": ticket.seo_data?.seo_image || ticket.image?.file_path || '/images/banner.jpg',
+            "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH}`,
+            "image": ticket.seo_data?.seo_image || ticket.image?.file_path || undefined,
             "address": {
               "@type": "PostalAddress",
               "addressLocality": process.env.NEXT_PUBLIC_PAGE_ADDRESS_LOCALITY,
@@ -251,12 +260,15 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
           <div className="bg-white rounded-lg shadow-lg p-3 sm:p-6 mb-4 sm:mb-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Image */}
-              <div className="relative">
+              <div className="relative h-96">
                 {ticket.image?.file_path && (
-                  <img
+                  <Image
                     src={ticket.image.file_path}
                     alt={ticket.title}
-                    className="w-full object-cover rounded-lg"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover rounded-lg"
+                    priority={true}
                   />
                 )}
                 {hasDiscount && (

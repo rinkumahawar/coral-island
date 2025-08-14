@@ -10,44 +10,32 @@ import { formatMoney } from '@/lib/money-format';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { TicketCardSkeleton } from '@/components/common/SkeletonLoader';
+import Image from 'next/image';
 
 // Enable ISR for better performance - revalidate every 5 minutes
 export const revalidate = 300; // 5 minutes
 
 // Generate metadata for SEO - this runs on the server
-export async function generateMetadata(): Promise<Metadata> { 
+export async function generateMetadata(): Promise<Metadata> {
   try {
+    // Fetch data server-side for SEO
     const data = await TicketService.getEventTickets();
     const { event: eventData, tickets: ticketsData } = data as any;
-    
-    // Parse social media meta data - handle the actual JSON structure
-    let socialData = {
-      facebook: { title: null, desc: null, image: null },
-      twitter: { title: null, desc: null, image: null }
-    };
-    
-    if (eventData?.seo_data?.seo_share) {
-      try {
-        // Handle both string and object formats
-        const shareData = eventData.seo_data.seo_share;
-        socialData = shareData as any;
-      } catch (e) {
-        console.warn('Failed to parse SEO share data:', e);
-      }
-    }
-    
-    // Use meta data from API or fallback to event data
-    const title = process.env.NEXT_PUBLIC_PAGE_NAME + " - Tickets";
+
+
+
+    // Use API data for metadata
+    const title = (process.env.NEXT_PUBLIC_PAGE_NAME) + " - Tickets";
     const description = process.env.NEXT_PUBLIC_PAGE_DESCRIPTION;
-    const image = process.env.NEXT_PUBLIC_LOGO_PATH;
-    
+    const image = `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH }`;
+
     return {
-      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://coralislandtour.com'),
+      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
       title: title,
       description: description,
       keywords: [
         'Coral Island',
-        'Pattaya', 
+        'Pattaya',
         'Thailand',
         'Event Tickets',
         'Adventure',
@@ -62,20 +50,20 @@ export async function generateMetadata(): Promise<Metadata> {
         title: title,
         description: description,
         type: 'website',
-        images: image ? [
+        images: [
           {
             url: image,
             width: 1200,
             height: 630,
             alt: title,
           }
-        ] : [],
+        ],
       },
       twitter: {
         card: 'summary_large_image',
         title: title,
         description: description,
-        images: process.env.NEXT_PUBLIC_LOGO_PATH ? [process.env.NEXT_PUBLIC_LOGO_PATH] : [],
+        images: [image],
       },
       alternates: {
         canonical: '/tickets',
@@ -83,6 +71,7 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   } catch (error) {
     console.error('Error generating metadata:', error);
+    // Fallback metadata for build failures
     return {
       title: 'Coral Island Event Tickets - Pattaya, Thailand',
       description: 'Book your tickets for the Coral Island Adventure Event. Choose from our selection of exciting packages and experiences.',
@@ -105,10 +94,13 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
       <div className="relative h-48 bg-gray-200">
         {ticket.image?.file_path && (
           <Link href={`/tickets/${ticket.slug}`} className="block w-full h-full">
-            <img
+            <Image
               src={ticket.image.file_path}
               alt={ticket.title}
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover hover:scale-105 transition-transform duration-300"
+              priority={false}
             />
           </Link>
         )}
@@ -126,7 +118,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
             {ticket.title}
           </Link>
         </h3>
-        
+
         {ticket.short_desc && (
           <p className="text-gray-600 text-sm mb-3 line-clamp-2">{ticket.short_desc}</p>
         )}
@@ -191,7 +183,7 @@ const TicketsPage: React.FC = async () => {
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Something went wrong</h2>
           <p className="text-gray-600 mb-4">{error}</p>
-          <Link 
+          <Link
             href="/tickets"
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors inline-block"
           >
@@ -301,8 +293,8 @@ const TicketsPage: React.FC = async () => {
             "name": eventData?.seo_data?.seo_title || eventData?.title,
             "description": eventData?.seo_data?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
             "url": process.env.NEXT_PUBLIC_SITE_URL,
-            "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH || '/images/coralisland/logo.jpg'}`,
-            "image": eventData?.seo_data?.seo_image || '/images/banner.jpg',
+            "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH}`,
+            "image": eventData?.seo_data?.seo_image || undefined,
             "address": {
               "@type": "PostalAddress",
               "addressLocality": process.env.NEXT_PUBLIC_PAGE_ADDRESS_LOCALITY,
@@ -325,7 +317,7 @@ const TicketsPage: React.FC = async () => {
       <Header breadcrumbs={[
         { label: 'Tickets' },
       ]} />
-      
+
       <main className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">

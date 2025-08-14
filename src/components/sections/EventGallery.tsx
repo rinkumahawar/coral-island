@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Card from '../base/Card';
+import Image from 'next/image';
 
 interface EventGalleryProps {
   gallery: any[];
@@ -11,11 +12,13 @@ const EventGallery: React.FC<EventGalleryProps> = ({ gallery }) => (
   <Card title="Event Gallery" className="mb-8" id="gallery">
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {gallery.length > 0 ? gallery.map((img, idx) => (
-        <div key={idx} className="aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-          <img 
+        <div key={idx} className="aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 relative">
+          <Image 
             src={img.url} 
             alt={img.alt || "Event Gallery"} 
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
+            fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            className="object-cover hover:scale-105 transition-transform duration-300" 
           />
         </div>
       )) : (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 interface AddonCardProps {
   id: string;
@@ -42,7 +43,13 @@ const AddonCard: React.FC<AddonCardProps> = ({
       onClick={() => !isDisabled && onToggle()}
     >
       <div className="relative h-32 overflow-hidden">
-        <img src={image} alt={name} className="w-full h-full object-cover" />
+        <Image
+          src={image}
+          alt={name}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover"
+        />
         <div className="absolute top-2 right-2">
           <span className={`px-2 py-1 text-xs font-medium rounded-full ${
             available ? 'bg-green-500 text-white' : 'bg-red-500 text-white'

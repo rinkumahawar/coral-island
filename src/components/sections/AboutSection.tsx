@@ -2,6 +2,7 @@
 
 import React from 'react';
 import '../../styles/html-content.css';
+import Image from 'next/image';
 
 interface AboutSectionProps {
   content: string;
@@ -20,11 +21,13 @@ const AboutSection: React.FC<AboutSectionProps> = ({ content, images }) => {
           </div>
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {images.slice(0, 4).map((image, index) => (
-              <div key={index} className="aspect-square overflow-hidden">
-                <img
+              <div key={index} className="aspect-square overflow-hidden relative">
+                <Image
                   src={image.url}
                   alt={`Coral Island ${index + 1}`}
-                  className="w-full h-full rounded-lg shadow-md object-cover object-center"
+                  fill
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  className="rounded-lg shadow-md object-cover object-center"
                 />
               </div>
             ))}

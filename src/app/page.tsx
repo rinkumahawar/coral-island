@@ -2,7 +2,7 @@ import HomeHeader from '../components/layout/HomeHeader';
 import HeroSection from '../components/sections/HeroSection';
 import WhatsAppButton from '../components/common/WhatsAppButton';
 import Footer from '@/components/layout/Footer';
-import { EventService } from '@/lib/api/services/event'; 
+import { EventService } from '@/lib/api/services/event';
 import EventTickets from '../components/sections/FeaturedTourPackages';
 import EventInformation from '@/components/sections/EventInformation';
 import EventHighlights from '../components/sections/EventHighlights';
@@ -23,41 +23,26 @@ import { HeroSkeleton, CardSkeleton } from '@/components/common/SkeletonLoader';
 export const revalidate = 300; // 5 minutes
 
 // Generate metadata for SEO - this runs on the server
-export async function generateMetadata(): Promise<Metadata> { 
+export async function generateMetadata(): Promise<Metadata> {
   try {
+    // Fetch data server-side for SEO
     const data = await EventService.getEventDetails();
     const { event: eventData, meta_data: metaData } = data as any;
-    
-    // Parse social media meta data - handle the actual JSON structure
-    let socialData = {
-      facebook: { title: null, desc: null, image: null },
-      twitter: { title: null, desc: null, image: null    }
- };
 
 
-    
-    if (metaData?.seo_share) {
-      try {
-        // Handle both string and object formats
-        const shareData = metaData.seo_share;
-        socialData = shareData as any;
-      } catch (e) {
-        console.warn('Failed to parse SEO share data:', e);
-      }
-    }
-    
-    // Use meta data from API or fallback to event data
-    const title = metaData?.seo_title || eventData?.title || 'Coral Island Adventure Event';
-    const description = metaData?.seo_desc || eventData?.description || 'Discover the hidden treasures of Thailand\'s most beautiful island with our Coral Island Adventure Event. Book your event today!';
-    const image = metaData?.seo_image || eventData?.banner_image?.file_path || '/images/banner.jpg';
-    
+
+    // Use API data for metadata
+    const title = metaData?.seo_title || eventData?.title || undefined;
+    const description = metaData?.seo_desc || eventData?.description || undefined;
+    const image = metaData?.seo_image || eventData?.banner_image?.file_path || undefined;
+
     return {
-      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://coralislandtour.com'),
+      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
       title: title,
       description: description,
       keywords: [
         'Coral Island',
-        'Pattaya', 
+        'Pattaya',
         'Thailand',
         'Event',
         'Adventure',
@@ -68,23 +53,23 @@ export async function generateMetadata(): Promise<Metadata> {
         'Vacation'
       ],
       openGraph: {
-        title: socialData.facebook?.title || title,
-        description: socialData.facebook?.desc || description,
+        title: title,
+        description: description,
         type: 'website',
-        images: image ? [
+        images: [
           {
             url: image,
             width: 1200,
             height: 630,
             alt: title,
           }
-        ] : [],
+        ],
       },
       twitter: {
         card: 'summary_large_image',
-        title: socialData.twitter?.title || title,
-        description: socialData.twitter?.desc || description,
-        images: socialData.twitter?.image || image ? [socialData.twitter?.image || image] : [],
+        title: title,
+        description: description,
+        images: [image],
       },
       alternates: {
         canonical: '/',
@@ -92,6 +77,7 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   } catch (error) {
     console.error('Error generating metadata:', error);
+    // Fallback metadata for build failures
     return {
       title: 'Coral Island Adventure Event - Pattaya, Thailand',
       description: 'Discover the hidden treasures of Thailand\'s most beautiful island with our Coral Island Adventure Event. Book your event today!',
@@ -126,7 +112,7 @@ async function getEventData() {
 // Main page component - now server-side rendered
 export default async function HomePage() {
   const { eventData, ticketData, error, reviews, seoData } = await getEventData();
-  
+
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -150,7 +136,7 @@ export default async function HomePage() {
             "@type": "Event",
             "name": seoData?.seo_title || eventData?.title,
             "description": seoData?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
-            "image": seoData?.seo_image || '/images/banner.jpg',
+            "image": seoData?.seo_image || undefined,
             "startDate": new Date().toISOString().split('T')[0] + "T08:00:00",
             "endDate": new Date().toISOString().split('T')[0] + "T16:00:00",
             "location": {
@@ -259,8 +245,8 @@ export default async function HomePage() {
             "name": seoData?.seo_title || eventData?.title,
             "description": seoData?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
             "url": process.env.NEXT_PUBLIC_SITE_URL,
-            "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH || '/images/coralisland/logo.jpg'}`,
-            "image": seoData?.seo_image || '/images/banner.jpg',
+            "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH}`,
+            "image": seoData?.seo_image || undefined,
             "address": {
               "@type": "PostalAddress",
               "addressLocality": process.env.NEXT_PUBLIC_PAGE_ADDRESS_LOCALITY,
@@ -281,11 +267,11 @@ export default async function HomePage() {
       />
 
       <HomeHeader />
-      
+
       <Suspense fallback={<HeroSkeleton />}>
         <HeroSection {...(eventData as any)} />
       </Suspense>
-      
+
       {/* Event Details Sections */}
       {eventData ? (
         <section className="py-16 bg-gradient-to-b from-blue-50 to-white">
@@ -293,7 +279,7 @@ export default async function HomePage() {
             <Suspense fallback={<CardSkeleton />}>
               <AboutSection content={eventData.content} images={eventData.gallery_images} />
             </Suspense>
-            
+
             {/* Main Content */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
               {/* Left Column - Main Content */}
@@ -323,7 +309,7 @@ export default async function HomePage() {
                 </Suspense>
               </div>
             </div>
-            
+
             {eventData.gallery_images && eventData.gallery_images.length > 0 && (
               <Suspense fallback={<CardSkeleton />}>
                 <EventGallery gallery={eventData.gallery_images} />
@@ -334,7 +320,7 @@ export default async function HomePage() {
                 <EventExtraContent extraContent={eventData.extra_content} maxWords={100} />
               </Suspense>
             )}
-            
+
             {/* Security & Trust Panel and FAQs side by side */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
               {eventData.faqs && eventData.faqs.length > 0 && (
@@ -368,9 +354,9 @@ export default async function HomePage() {
           </div>
         </div>
       )}
-      
+
       <Footer />
-    
+
       <WhatsAppButton phoneNumber={process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || ''} />
     </div>
   );

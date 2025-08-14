@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '../base/Button';
+import Image from 'next/image';
 
 interface PackageCardProps {
   title: string;
@@ -22,11 +23,13 @@ const PackageCard: React.FC<PackageCardProps> = ({
 }) => {
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform hover:scale-105">
-      <div className="h-64 overflow-hidden">
-        <img
+      <div className="h-64 overflow-hidden relative">
+        <Image
           src={image}
           alt={title}
-          className="w-full h-full object-cover object-top"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover object-top"
         />
       </div>
       <div className="p-6">

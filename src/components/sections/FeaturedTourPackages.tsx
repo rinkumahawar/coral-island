@@ -11,6 +11,7 @@ import TicketDetails from './TicketDetails';
 import '../../styles/html-content.css';
 import { TicketData } from '@/lib/api/services/ticket';
 import { formatMoney } from '@/lib/money-format';
+import Image from 'next/image';
 
 
 
@@ -74,10 +75,12 @@ const TicketCard: React.FC<{ ticket: TicketData }> = ({ ticket }) => {
           {/* Image Section */}
           <div className="w-full lg:w-1/3 h-48 lg:h-60 overflow-hidden p-0 relative">
             <Link href={`/tickets/${ticket.slug}`} className="block w-full h-full">
-              <img
+              <Image
                 src={ticket.image?.file_path || '/images/banner.jpg'}
                 alt={ticket.title}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                fill
+                sizes="(max-width: 1024px) 100vw, 33vw"
+                className="object-cover hover:scale-105 transition-transform duration-300"
               />
             </Link>
             {ticket.price && ticket.sale_price && ticket.price !== ticket.sale_price && (
