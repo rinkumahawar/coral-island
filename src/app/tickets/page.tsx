@@ -8,16 +8,11 @@ import { ApiError } from '@/lib/api/types';
 import Script from 'next/script';
 import { formatMoney } from '@/lib/money-format';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
+import { TicketCardSkeleton } from '@/components/common/SkeletonLoader';
 
-// Force dynamic rendering - disable static generation
-// export const dynamic = 'force-dynamic';
-// export const revalidate = 0;
-
-// Required for static export compatibility
-export async function generateStaticParams() {
-  // Return empty array - pages will be generated on-demand
-  return [];
-}
+// Enable ISR for better performance - revalidate every 5 minutes
+export const revalidate = 300; // 5 minutes
 
 // Generate metadata for SEO - this runs on the server
 export async function generateMetadata(): Promise<Metadata> { 
@@ -47,6 +42,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const image = process.env.NEXT_PUBLIC_LOGO_PATH;
     
     return {
+      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://coralislandtour.com'),
       title: title,
       description: description,
       keywords: [
@@ -340,21 +336,29 @@ const TicketsPage: React.FC = async () => {
         </div>
 
         {/* Tickets Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ticketsData.map((ticket) => (
-            <TicketCard
-              key={ticket.id}
-              ticket={ticket}
-            />
-          ))}
-        </div>
-
-        {ticketsData.length === 0 && (
-          <div className="text-center py-12">
-            <FontAwesomeIcon icon={faExclamationCircle} className="text-gray-400 text-4xl mb-4" />
-            <p className="text-gray-600">No tickets available at the moment.</p>
+        <Suspense fallback={
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <TicketCardSkeleton key={index} />
+            ))}
           </div>
-        )}
+        }>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {ticketsData.map((ticket) => (
+              <TicketCard
+                key={ticket.id}
+                ticket={ticket}
+              />
+            ))}
+          </div>
+
+          {ticketsData.length === 0 && (
+            <div className="text-center py-12">
+              <FontAwesomeIcon icon={faExclamationCircle} className="text-gray-400 text-4xl mb-4" />
+              <p className="text-gray-600">No tickets available at the moment.</p>
+            </div>
+          )}
+        </Suspense>
       </main>
 
       <Footer />

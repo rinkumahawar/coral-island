@@ -11,16 +11,11 @@ import Link from 'next/link';
 import Script from 'next/script';
 import { formatMoney } from '@/lib/money-format';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
+import { CardSkeleton } from '@/components/common/SkeletonLoader';
 
-// Force dynamic rendering - disable static generation
-// export const dynamic = 'force-dynamic';
-// export const revalidate = 0;
-
-// Required for static export with dynamic routes
-export async function generateStaticParams() {
-  // Return empty array - pages will be generated on-demand
-  return [];
-}
+// Enable ISR for better performance - revalidate every 5 minutes
+export const revalidate = 300; // 5 minutes
 
 // Generate metadata for SEO - this runs on the server
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> { 
@@ -57,6 +52,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const image = ticket.seo_data?.seo_image || ticket.image?.file_path;
     
     return {
+      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://coralislandtour.com'),
       title: title,
       description: description,
       keywords: [
@@ -250,7 +246,7 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
       
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 pb-24 sm:pb-32 flex-1">
 
-        <div className="mx-auto">
+                <div className="mx-auto">
           {/* Ticket Header */}
           <div className="bg-white rounded-lg shadow-lg p-3 sm:p-6 mb-4 sm:mb-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
@@ -265,68 +261,68 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
                 )}
                 {hasDiscount && (
                   <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-red-500 text-white text-xs sm:text-sm font-bold px-2 sm:px-3 py-1 rounded">
-                    SALE
-                  </div>
-                )}
-              </div>
-
-              {/* Ticket Info */}
-              <div className="space-y-3 sm:space-y-4">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">{ticket.title}</h1>
-                
-                {ticket.short_desc && (
-                  <p className="text-sm sm:text-base lg:text-lg text-gray-600">{ticket.short_desc}</p>
-                )}
-
-                {ticket.content && (
-                  <div>
-                    <div className="text-sm sm:text-sm md:text-base text-gray-700 leading-relaxed" 
-                        dangerouslySetInnerHTML={{ __html: ticket.content }} />
-                  </div>
-                )}
-
-                {/* Highlights */}
-                {ticket.highlights && (() => {
-                  const validHighlights = Object.entries(ticket.highlights)
-                    .filter(([key, highlight]) => key !== '__number__' && highlight && highlight.title)
-                    .map(([key, highlight]) => highlight as { title: string; icon_code: string });
-                  
-                  return validHighlights.length > 0 ? (
-                    <div className="space-y-1 sm:space-y-2">
-                      <h4 className="text-xs sm:text-sm font-semibold text-blue-700">Highlights</h4>
-                      <ul className="list-disc list-inside space-y-0.5 sm:space-y-1">
-                        {validHighlights.map((highlight, index) => (
-                          <li key={index} className="text-xs sm:text-sm text-gray-600">
-                            {highlight.title}
-                          </li>
-                        ))}
-                      </ul>
+                      SALE
                     </div>
-                  ) : null;
-                })()}
+                  )}
+                </div>
+
+                {/* Ticket Info */}
+                <div className="space-y-3 sm:space-y-4">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">{ticket.title}</h1>
+                  
+                  {ticket.short_desc && (
+                    <p className="text-sm sm:text-base lg:text-lg text-gray-600">{ticket.short_desc}</p>
+                  )}
+
+                  {ticket.content && (
+                    <div>
+                      <div className="text-sm sm:text-sm md:text-base text-gray-700 leading-relaxed" 
+                          dangerouslySetInnerHTML={{ __html: ticket.content }} />
+                    </div>
+                  )}
+
+                  {/* Highlights */}
+                  {ticket.highlights && (() => {
+                    const validHighlights = Object.entries(ticket.highlights)
+                      .filter(([key, highlight]) => key !== '__number__' && highlight && highlight.title)
+                      .map(([key, highlight]) => highlight as { title: string; icon_code: string });
+                    
+                    return validHighlights.length > 0 ? (
+                      <div className="space-y-1 sm:space-y-2">
+                        <h4 className="text-xs sm:text-sm font-semibold text-blue-700">Highlights</h4>
+                        <ul className="list-disc list-inside space-y-0.5 sm:space-y-1">
+                          {validHighlights.map((highlight, index) => (
+                            <li key={index} className="text-xs sm:text-sm text-gray-600">
+                              {highlight.title}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null;
+                  })()}
+                </div>
               </div>
             </div>
-          </div>
-          
-          {/* Gallery Section */}
-          {ticket.gallery_images && ticket.gallery_images.length > 0 && (
-            <div className="mt-4 sm:mt-6">
-              <EventGallery gallery={ticket.gallery_images} />
-            </div>
-          )}
+            
+            {/* Gallery Section */}
+            {ticket.gallery_images && ticket.gallery_images.length > 0 && (
+              <div className="mt-4 sm:mt-6">
+                <EventGallery gallery={ticket.gallery_images} />
+              </div>
+            )}
 
-          {/* Ticket Details */}
-          <div className="bg-white rounded-lg shadow-lg p-3 sm:p-6">
-            <TicketDetails ticket={ticket} />
-          </div>
-
-          {/* FAQs Section */}
-          {ticket.faqs && ticket.faqs.length > 0 && (
-            <div className="mt-4 sm:mt-6">
-              <EventFaqs faqs={ticket.faqs} />
+            {/* Ticket Details */}
+            <div className="bg-white rounded-lg shadow-lg p-3 sm:p-6">
+              <TicketDetails ticket={ticket} />
             </div>
-          )}
-        </div>
+
+            {/* FAQs Section */}
+            {ticket.faqs && ticket.faqs.length > 0 && (
+              <div className="mt-4 sm:mt-6">
+                <EventFaqs faqs={ticket.faqs} />
+              </div>
+            )}
+          </div>
 
         {/* Fixed Navigation Buttons */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 py-2 px-3 sm:py-3 sm:px-4">

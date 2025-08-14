@@ -16,10 +16,11 @@ import { Metadata } from 'next';
 import AboutSection from '@/components/sections/AboutSection';
 import BookingCTA from '@/components/sections/BookingCTA';
 import Script from 'next/script';
+import { Suspense } from 'react';
+import { HeroSkeleton, CardSkeleton } from '@/components/common/SkeletonLoader';
 
-// Force dynamic rendering - disable static generation
-// export const dynamic = 'force-dynamic';
-// export const revalidate = 0;
+// Enable ISR for better performance - revalidate every 5 minutes
+export const revalidate = 300; // 5 minutes
 
 // Generate metadata for SEO - this runs on the server
 export async function generateMetadata(): Promise<Metadata> { 
@@ -51,6 +52,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const image = metaData?.seo_image || eventData?.banner_image?.file_path || '/images/banner.jpg';
     
     return {
+      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://coralislandtour.com'),
       title: title,
       description: description,
       keywords: [
@@ -279,44 +281,92 @@ export default async function HomePage() {
       />
 
       <HomeHeader />
-      <HeroSection {...(eventData as any)} />
+      
+      <Suspense fallback={<HeroSkeleton />}>
+        <HeroSection {...(eventData as any)} />
+      </Suspense>
       
       {/* Event Details Sections */}
-      {eventData && (
+      {eventData ? (
         <section className="py-16 bg-gradient-to-b from-blue-50 to-white">
           <div className="container mx-auto px-4">
-            {/* Header */}
-  
-            <AboutSection content={eventData.content} images={eventData.gallery_images} />
+            <Suspense fallback={<CardSkeleton />}>
+              <AboutSection content={eventData.content} images={eventData.gallery_images} />
+            </Suspense>
+            
             {/* Main Content */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
               {/* Left Column - Main Content */}
               <div className="lg:col-span-2 space-y-8">
-                <EventTickets tickets={ticketData as any} />
-                {eventData.highlight_content && <EventHighlights highlight={eventData.highlight_content} />}
+                <Suspense fallback={<CardSkeleton />}>
+                  <EventTickets tickets={ticketData as any} />
+                </Suspense>
+                {eventData.highlight_content && (
+                  <Suspense fallback={<CardSkeleton />}>
+                    <EventHighlights highlight={eventData.highlight_content} />
+                  </Suspense>
+                )}
               </div>
 
               {/* Right Column - Sidebar */}
               <div className="space-y-8">
-                <EventInformation event={eventData} />
-                {eventData.review_stats && <EventReviewStats stats={eventData.review_stats} />}
-                <BookingCTA price={eventData.price} />
+                <Suspense fallback={<CardSkeleton />}>
+                  <EventInformation event={eventData} />
+                </Suspense>
+                {eventData.review_stats && (
+                  <Suspense fallback={<CardSkeleton />}>
+                    <EventReviewStats stats={eventData.review_stats} />
+                  </Suspense>
+                )}
+                <Suspense fallback={<CardSkeleton />}>
+                  <BookingCTA price={eventData.price} />
+                </Suspense>
               </div>
             </div>
             
-            {eventData.gallery_images && eventData.gallery_images.length > 0 && <EventGallery gallery={eventData.gallery_images} />}
-                {eventData.extra_content && <EventExtraContent extraContent={eventData.extra_content} maxWords={100} />}
-                
-                {/* Security & Trust Panel and FAQs side by side */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-                  
-                  {eventData.faqs && eventData.faqs.length > 0 && <EventFaqs faqs={eventData.faqs} />}
-                  <EventCustomerReviews reviews={reviews} />
-                </div>
-                <SecurityTrustPanel />
-                
+            {eventData.gallery_images && eventData.gallery_images.length > 0 && (
+              <Suspense fallback={<CardSkeleton />}>
+                <EventGallery gallery={eventData.gallery_images} />
+              </Suspense>
+            )}
+            {eventData.extra_content && (
+              <Suspense fallback={<CardSkeleton />}>
+                <EventExtraContent extraContent={eventData.extra_content} maxWords={100} />
+              </Suspense>
+            )}
+            
+            {/* Security & Trust Panel and FAQs side by side */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+              {eventData.faqs && eventData.faqs.length > 0 && (
+                <Suspense fallback={<CardSkeleton />}>
+                  <EventFaqs faqs={eventData.faqs} />
+                </Suspense>
+              )}
+              <Suspense fallback={<CardSkeleton />}>
+                <EventCustomerReviews reviews={reviews} />
+              </Suspense>
+            </div>
+            <Suspense fallback={<CardSkeleton />}>
+              <SecurityTrustPanel />
+            </Suspense>
           </div>
         </section>
+      ) : (
+        <div className="py-16 bg-gradient-to-b from-blue-50 to-white">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-8">
+                <CardSkeleton />
+                <CardSkeleton />
+              </div>
+              <div className="space-y-8">
+                <CardSkeleton />
+                <CardSkeleton />
+                <CardSkeleton />
+              </div>
+            </div>
+          </div>
+        </div>
       )}
       
       <Footer />
