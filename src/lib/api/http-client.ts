@@ -81,7 +81,6 @@ export class HttpClient {
   }
 
   public static async post<T>(endpoint: string, data?: any, config?: ApiRequestConfig): Promise<ApiResponse<T>> {
-    console.log('post', endpoint, data, config);
     return this.request<T>(endpoint, {
       ...config,
       method: 'POST',

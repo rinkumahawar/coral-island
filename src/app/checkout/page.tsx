@@ -116,7 +116,6 @@ const CheckoutPage: React.FC = () => {
 
     // Update booking details from context
     useEffect(() => {
-        console.log("bookingData", bookingData);
         if (bookingData) {
             setBookingDetails({
                 title: bookingData.ticket?.title || "",

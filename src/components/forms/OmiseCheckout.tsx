@@ -36,15 +36,12 @@ const OmiseCheckout: React.FC<OmiseCheckoutProps> = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    console.log('Loading Omise script...');
     const script = document.createElement("script");
     script.src = "https://cdn.omise.co/omise.js";
     script.type = "text/javascript";
     document.head.appendChild(script);
 
     script.onload = () => {
-      console.log('Omise script loaded successfully');
-      
       // Configure OmiseCard
       (window as any).OmiseCard.configure({
         publicKey: process.env.NEXT_PUBLIC_OMISE_PUBLIC_KEY || "pkey_test_5y1vaunkvl32w0uehjq",
@@ -67,7 +64,6 @@ const OmiseCheckout: React.FC<OmiseCheckoutProps> = ({
       
       // Attach the configuration
       (window as any).OmiseCard.attach();
-      console.log('OmiseCard configured and attached');
     };
 
     script.onerror = (error) => {

@@ -4,6 +4,7 @@ import '../lib/fontawesome';
 import { BookingProvider } from '@/contexts/BookingContext';
 import FontAwesomeProvider from '@/components/common/FontAwesomeProvider';
 import Script from 'next/script';
+import { Metadata } from 'next';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,6 +18,62 @@ const geistMono = Geist_Mono({
   display: 'swap',
 });
 
+// Metadata configuration for the entire app
+export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://coralislandtour.com'),
+  title: {
+    default: 'Coral Island Pattaya - Adventure Tours & Events',
+    template: '%s | Coral Island Pattaya'
+  },
+  description: 'Discover the hidden treasures of Thailand\'s most beautiful island with our Coral Island Adventure Event. Book your event today!',
+  keywords: ['Coral Island', 'Pattaya', 'Thailand', 'Adventure', 'Beach Activities', 'Island Tours'],
+  authors: [{ name: 'Coral Island Pattaya' }],
+  creator: 'Coral Island Pattaya',
+  publisher: 'Coral Island Pattaya',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://coralislandtour.com',
+    siteName: 'Coral Island Pattaya',
+    title: 'Coral Island Pattaya - Adventure Tours & Events',
+    description: 'Discover the hidden treasures of Thailand\'s most beautiful island with our Coral Island Adventure Event. Book your event today!',
+    images: [
+      {
+        url: process.env.NEXT_PUBLIC_LOGO_PATH || '/images/coralisland/logo.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Coral Island Pattaya',
+      }
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: process.env.NEXT_PUBLIC_TWITTER_URL || '@coralislandpattaya',
+    creator: '@coralislandpattaya',
+    title: 'Coral Island Pattaya - Adventure Tours & Events',
+    description: 'Discover the hidden treasures of Thailand\'s most beautiful island with our Coral Island Adventure Event. Book your event today!',
+    images: [process.env.NEXT_PUBLIC_LOGO_PATH || '/images/coralisland/logo.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
+  },
+};
 
 export default function RootLayout({
   children,

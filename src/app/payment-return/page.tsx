@@ -17,8 +17,6 @@ const PaymentReturnContent = () => {
     const bookingCode = searchParams.get('code');
     setBookingCode(bookingCode || '');
     
-    console.log('Payment return page params:', { bookingCode });
-
     checkPaymentStatus(bookingCode);
   }, [searchParams]);
 

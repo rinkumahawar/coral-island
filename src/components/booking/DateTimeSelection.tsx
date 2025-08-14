@@ -32,7 +32,6 @@ const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
             label: slot.time_12
         };
     });
-    console.log("selectedTime", selectedTime);
     return (
         <section className="bg-white rounded-lg sm:p-6">  
             <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Select Date & Time</h2>

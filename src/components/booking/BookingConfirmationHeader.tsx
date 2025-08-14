@@ -81,11 +81,11 @@ const BookingConfirmationHeader: React.FC<BookingConfirmationHeaderProps> = ({
       )}
       {status === 'paid' && (
         <BookingActions
-          onDownloadReceipt={() => console.log('Download Receipt clicked')}
+          onDownloadReceipt={() => {}}
           onDownloadVoucher={handleDownloadVoucher}
-          onPrintReceipt={() => console.log('Print Receipt clicked')}
+          onPrintReceipt={() => {}}
           onPrintVoucher={handlePrintVoucher}
-          onReturnHome={() => console.log('Return Home clicked')}
+          onReturnHome={() => {}}
           className="justify-center"
         />
       )}

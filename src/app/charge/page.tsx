@@ -35,8 +35,6 @@ const ChargeContent = () => {
         const bookingCode = searchParams.get('booking_code');
         const customerId = searchParams.get('customer_id');
         
-        console.log('Processing charge with:', { omiseToken, amount, currency, description, bookingCode });
-
         // Use the payment service directly
         
         const data = await PaymentService.createPaymentWith3DS({
@@ -50,13 +48,11 @@ const ChargeContent = () => {
         });
 
         if (data.requires_redirect && data.redirect_url) {
-          console.log('Redirecting to 3D Secure:', data.redirect_url);
           window.location.href = data.redirect_url;
           return;
         }
 
         if (data.success) {
-            console.log('Payment successful:', data);
           // Redirect back to success page
           router.push('/payment-return?status=success&charge_id=' + data.charge_id);
         } else {

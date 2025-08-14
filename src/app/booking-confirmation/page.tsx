@@ -246,10 +246,10 @@ const BookingConfirmationContent: React.FC = () => {
                     <div className="lg:col-span-1">
                         <div className="sticky top-6">
                             <BookingSupportSection
-                                onContactSupport={() => console.log('Contact support clicked')}
-                                onShareEmail={() => console.log('Share email clicked')}
-                                onShareWhatsApp={() => console.log('Share WhatsApp clicked')}
-                                onFaqClick={(question) => console.log('FAQ clicked:', question)}
+                                onContactSupport={() => {}}
+                                onShareEmail={() => {}}
+                                onShareWhatsApp={() => {}}
+                                onFaqClick={(question) => {}}
                                 items={[
                                     { name: 'Adults', quantity: adults, price: adultPrice },
                                     { name: 'Children', quantity: children, price: childPrice }
