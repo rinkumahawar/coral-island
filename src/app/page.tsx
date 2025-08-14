@@ -18,8 +18,8 @@ import BookingCTA from '@/components/sections/BookingCTA';
 import Script from 'next/script';
 
 // Force dynamic rendering - disable static generation
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// export const dynamic = 'force-dynamic';
+// export const revalidate = 0;
 
 // Generate metadata for SEO - this runs on the server
 export async function generateMetadata(): Promise<Metadata> { 

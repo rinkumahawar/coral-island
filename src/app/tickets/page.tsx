@@ -10,8 +10,8 @@ import { formatMoney } from '@/lib/money-format';
 import { Metadata } from 'next';
 
 // Force dynamic rendering - disable static generation
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// export const dynamic = 'force-dynamic';
+// export const revalidate = 0;
 
 // Required for static export compatibility
 export async function generateStaticParams() {

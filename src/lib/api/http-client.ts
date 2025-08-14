@@ -38,10 +38,7 @@ export class HttpClient {
       const response = await fetch(url, {
         ...config,
         signal: controller.signal,
-        headers: this.getHeaders(config),
-        // Force no caching for SSR pages
-        cache: 'no-store',
-        next: { revalidate: 0 }
+        headers: this.getHeaders(config)
       });
 
       clearTimeout(timeoutId);
