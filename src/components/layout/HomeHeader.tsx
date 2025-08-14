@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import MobileMenu from './MobileMenu';
 
 const HomeHeader: React.FC = () => {
@@ -7,8 +8,20 @@ const HomeHeader: React.FC = () => {
     <header className="bg-blue-900 text-white relative">
       <div className="container mx-auto px-6 py-4">
         <nav className="flex justify-between items-center">
-          <div className="flex items-center">
-            <h1 className="text-3xl font-bold">{process.env.NEXT_PUBLIC_PAGE_NAME}</h1>
+          <div className="flex items-center space-x-3">
+            {process.env.NEXT_PUBLIC_LOGO_PATH && (
+              <Link href="/">
+                <div className="relative w-50 h-13">
+                  <Image
+                    src={process.env.NEXT_PUBLIC_LOGO_PATH}
+                    alt="Logo"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+              </Link>
+            )}
           </div>
           
           {/* Desktop Navigation */}

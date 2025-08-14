@@ -9,6 +9,7 @@ import {
     faHome
 } from '@fortawesome/free-solid-svg-icons';
 import BackButton from '@/components/layout/BackButton';
+import HomeHeader from './HomeHeader';
 
 interface BreadcrumbItem {
     label: string;
@@ -28,15 +29,7 @@ const Header: React.FC<HeaderProps> = ({ breadcrumbs = [], title, description })
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-transparent"></div>
             </div>
             <div className="relative z-10">
-                <nav className="container mx-auto px-4 sm:px-6 py-3 flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
-                    <div className="flex items-center w-full md:w-auto justify-between">
-                        <BackButton />
-                        <Link href="/" className="hover:opacity-90 transition-opacity">
-                            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white">{ process.env.NEXT_PUBLIC_PAGE_NAME}</div>
-                        </Link>
-                        <div className="w-8 md:hidden"></div> {/* Spacer for mobile layout */}
-                    </div>
-                </nav>
+                <HomeHeader />
 
                 <div className="container mx-auto px-4 sm:px-6 py-6 md:py-16">
                     <div className="max-w-2xl">

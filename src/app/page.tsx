@@ -257,7 +257,7 @@ export default async function HomePage() {
             "name": seoData?.seo_title || eventData?.title,
             "description": seoData?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
             "url": process.env.NEXT_PUBLIC_SITE_URL,
-            "logo": `${process.env.NEXT_PUBLIC_SITE_URL}/images/logo.png`,
+            "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH || '/images/coralisland/logo.jpg'}`,
             "image": seoData?.seo_image || '/images/banner.jpg',
             "address": {
               "@type": "PostalAddress",

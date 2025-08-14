@@ -62,7 +62,7 @@ const AddOnSelection: React.FC<AddOnSelectionProps> = ({
                                 {/* Image - Small on mobile, full width on desktop */}
                                 <div className="relative w-20 h-20 sm:w-full sm:h-32 overflow-hidden flex-shrink-0">
                                     <img
-                                        src="https://readdy.ai/api/search-image?query=Traditional%20Thai%20lunch%20spread%20at%20beachside%20restaurant%20in%20Coral%20Island%20Pattaya%2C%20colorful%20authentic%20Thai%20dishes%2C%20tom%20yum%2C%20pad%20thai%2C%20fresh%20seafood%2C%20beautiful%20presentation%20with%20tropical%20garnishes%2C%20ocean%20view%20dining%20setting&amp;width=400&amp;height=300&amp;seq=7&amp;orientation=landscape" 
+                                        src="/images/addons.jpg" 
                                         alt={addon.name}
                                         className="w-full h-full object-cover"
                                     />
