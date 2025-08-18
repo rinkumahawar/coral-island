@@ -67,7 +67,7 @@ const EventInformation: React.FC<EventInformationProps> = ({ event }) => (
           </div>
           <div>
             <p className="text-sm text-gray-500">Price</p>
-            <p className="font-bold text-2xl text-green-600">{formatMoney(Number(event.price))}</p>
+            <p className="font-bold text-2xl text-green-600">{formatMoney(Number(event.sale_price))}</p>
           </div>
         </div>
       </div>

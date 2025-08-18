@@ -325,7 +325,7 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
 
             {/* Ticket Details */}
             <div className="bg-white rounded-lg shadow-lg p-3 sm:p-6">
-              <TicketDetails ticket={ticket} />
+              <TicketDetails ticket={ticket} is_content={false} />
             </div>
 
             {/* FAQs Section */}

@@ -19,7 +19,7 @@ const BookingCTA: React.FC<BookingCTAProps> = ({
     <div className="text-center">
       <h3 className="text-2xl font-bold mb-4">{title}</h3>
       <p className="text-blue-100 mb-6">{description}</p>
-      <BookingButton price={price || "฿2,500"} />
+      <BookingButton price={price || "0"} />
     </div>
   </Card>
 );

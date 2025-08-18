@@ -19,13 +19,14 @@ interface TicketDetailsProps {
     }>;
     term_condition?: string;
   };
+  is_content: boolean;
 }
 
-const TicketDetails: React.FC<TicketDetailsProps> = ({ ticket }) => {
+const TicketDetails: React.FC<TicketDetailsProps> = ({ ticket, is_content = true }) => {
   return (
     <div className="space-y-4 md:space-y-6">
       {/* Content Section */}
-      {ticket.content && (
+      {ticket.content && is_content && (
         <div>
           <h5 className="font-semibold text-gray-900 mb-2 md:mb-3 flex items-center text-sm md:text-base">
             <span className="mr-2">📋</span> Event Overview:

@@ -305,7 +305,7 @@ export default async function HomePage() {
                   </Suspense>
                 )}
                 <Suspense fallback={<CardSkeleton />}>
-                  <BookingCTA price={eventData.price} />
+                  <BookingCTA price={eventData.sale_price} />
                 </Suspense>
               </div>
             </div>
