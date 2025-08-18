@@ -10,12 +10,26 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/private/'],
+        disallow: [
+          '/api/',
+          '/booking/',
+          '/booking-confirmation/',
+          '/charge/',
+          '/payment-return/',
+          '/checkout/'
+        ],
       },
       {
         userAgent: 'Googlebot',
         allow: '/',
-        disallow: ['/api/', '/admin/', '/private/'],
+        disallow: [
+          '/api/',
+          '/booking/',
+          '/booking-confirmation/',
+          '/charge/',
+          '/payment-return/',
+          '/checkout/'
+        ],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
