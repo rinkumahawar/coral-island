@@ -20,8 +20,8 @@ export interface TicketData {
   id: number;
   slug: string;
   title: string;
-  short_desc: string | null;
   content: string;
+  highlight_content: string;
   price: string;
   sale_price: string;
   image: {

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faStarHalfAlt, faUsers, faBaby } from '@fortawesome/free-solid-svg-icons';
+import { faStar, faStarHalfAlt, faUsers, faBaby, faClock } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import Card from '../base/Card';
 import { Dialog, Transition } from '@headlessui/react';
@@ -38,6 +38,25 @@ const TicketCard: React.FC<{ ticket: TicketData }> = ({ ticket }) => {
       return Math.round(((original - sale) / original) * 100);
     }
     return 0;
+  };
+
+  const formatDuration = (duration: string) => {
+    // Check if duration is just a number (minutes)
+    if (/^\d+$/.test(duration)) {
+      const minutes = parseInt(duration);
+      if (minutes < 60) {
+        return `${minutes}m`;
+      } else if (minutes % 60 === 0) {
+        return `${minutes / 60}h`;
+      } else {
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        return `${hours}h ${remainingMinutes}m`;
+      }
+    }
+    
+    // If it's already formatted (e.g., "2h 30m", "1.5h"), return as is
+    return duration;
   };
 
   const renderStars = (rating: number, hasHalfStar?: boolean) => {
@@ -90,19 +109,22 @@ const TicketCard: React.FC<{ ticket: TicketData }> = ({ ticket }) => {
                 </span>
               </div>
             )}
+            {ticket.duration && (
+              <div className="absolute bottom-2 right-2 z-10">
+                <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2 py-1 lg:px-3 lg:py-1 rounded-full text-xs lg:text-sm font-medium border border-blue-200 shadow-sm">
+                  <FontAwesomeIcon icon={faClock} className="w-3 h-3 lg:w-3.5 lg:h-3.5" />
+                  {formatDuration(ticket.duration)}
+                </span>
+              </div>
+            )}
           </div>
           
           {/* Content Section */}
           <div className="p-2 lg:p-3 flex-1 flex flex-col justify-between">
             <div>
-              {/* Header with Title and Duration */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 lg:mb-1 gap-2">
+              {/* Header with Title */}
+              <div className="mb-2 lg:mb-1">
                 <h3 className="text-base lg:text-xl font-semibold text-gray-800 leading-tight">{ticket.title}</h3>
-                {ticket.duration && (
-                  <span className="text-xs lg:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded self-start sm:self-auto">
-                    ⏱️ {ticket.duration}
-                  </span>
-                )}
               </div>
               
               {/* Rating Section */}
@@ -279,7 +301,7 @@ const TicketCard: React.FC<{ ticket: TicketData }> = ({ ticket }) => {
                   
                   {/* Content */}
                   <div className="flex-1 overflow-y-auto p-4 md:p-6">
-                    <TicketDetails ticket={ticket} />
+                    <TicketDetails ticket={ticket} is_content={true} />
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

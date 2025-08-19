@@ -6,10 +6,11 @@ export interface TicketData {
   id: number;
   title: string;
   slug: string;
-  short_desc: string | null;
+  highlight_content: string;
   content: string;
   price: string;
   sale_price: string;
+  duration: number;
   exclude: Array<{
     title: string;
   }>;

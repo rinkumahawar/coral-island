@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTicket } from '@fortawesome/free-solid-svg-icons';
+import { faTicket, faClock } from '@fortawesome/free-solid-svg-icons';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import TicketDetails from '@/components/sections/TicketDetails';
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     
     // Use API data for metadata
     const title = ticket.seo_data?.seo_title || ticket.title || undefined;
-    const description = ticket.seo_data?.seo_desc || ticket.short_desc || undefined;
+    const description = ticket.seo_data?.seo_desc || ticket.content || undefined;
     const image = ticket.seo_data?.seo_image || ticket.image?.file_path || undefined;
     
     return {
@@ -127,6 +127,25 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
   const basePrice = parseFloat(ticket.price);
   const salePrice = parseFloat(ticket.sale_price);
   const hasDiscount = salePrice < basePrice;
+
+  const formatDuration = (duration: string) => {
+    // Check if duration is just a number (minutes)
+    if (/^\d+$/.test(duration)) {
+      const minutes = parseInt(duration);
+      if (minutes < 60) {
+        return `${minutes}m`;
+      } else if (minutes % 60 === 0) {
+        return `${minutes / 60}h`;
+      } else {
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        return `${hours}h ${remainingMinutes}m`;
+      }
+    }
+    
+    // If it's already formatted (e.g., "2h 30m", "1.5h"), return as is
+    return duration;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 relative flex flex-col">
@@ -276,15 +295,19 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
                       SALE
                     </div>
                   )}
+                {ticket.duration && (
+                  <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-10">
+                    <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium border border-blue-200 shadow-sm">
+                      <FontAwesomeIcon icon={faClock} className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                      {formatDuration(ticket.duration)}
+                    </span>
+                  </div>
+                )}
                 </div>
 
                 {/* Ticket Info */}
                 <div className="space-y-3 sm:space-y-4">
                   <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">{ticket.title}</h1>
-                  
-                  {ticket.short_desc && (
-                    <p className="text-sm sm:text-base lg:text-lg text-gray-600">{ticket.short_desc}</p>
-                  )}
 
                   {ticket.content && (
                     <div>

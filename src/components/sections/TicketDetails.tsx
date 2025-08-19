@@ -18,6 +18,7 @@ interface TicketDetailsProps {
       title: string;
     }>;
     term_condition?: string;
+    highlight_content?: string;
   };
   is_content: boolean;
 }
@@ -33,6 +34,17 @@ const TicketDetails: React.FC<TicketDetailsProps> = ({ ticket, is_content = true
           </h5>
           <div className="text-sm md:text-base text-gray-700 leading-relaxed" 
                dangerouslySetInnerHTML={{ __html: ticket.content }} />
+        </div>
+      )}
+
+      {/* Highlight Content Section */}
+      {ticket.highlight_content && (
+        <div>
+          <h5 className="font-semibold text-amber-700 mb-2 md:mb-3 flex items-center text-sm md:text-base">
+            <span className="mr-2">⭐</span> Highlights:
+          </h5>
+          <div className="text-sm md:text-base text-gray-700 leading-relaxed bg-amber-50 p-3 md:p-4 rounded-lg border border-amber-200 html-content" 
+               dangerouslySetInnerHTML={{ __html: ticket.highlight_content }} />
         </div>
       )}
 

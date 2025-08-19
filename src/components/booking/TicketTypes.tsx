@@ -8,7 +8,6 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 export interface EventTicket {
     id: number;
     title: string;
-    short_desc: string | null;
     price: string;
     sale_price: string;
     image: {
@@ -73,7 +72,6 @@ const TicketTypes: React.FC<TicketTypesProps> = ({ tickets, selectedTicket, onTi
                                 <div className="flex items-start">
                                     <div className="flex-1">
                                         <h3 className="text-sm sm:text-lg lg:text-xl font-semibold text-gray-800">{ticket.title}</h3>
-                                        <p className="text-gray-600 mt-1 text-xs sm:text-sm lg:text-base">{ticket.short_desc}</p>
                                         <div className="mt-2 sm:mt-3 flex items-center space-x-4 lg:space-x-6">
                                             <div className="flex items-center space-x-2">
                                                 <span className="text-xs sm:text-sm text-gray-500">Adult:</span>
@@ -162,7 +160,7 @@ const TicketTypes: React.FC<TicketTypesProps> = ({ tickets, selectedTicket, onTi
                                     
                                     {/* Content */}
                                     <div className="flex-1 overflow-y-auto p-4 md:p-6">
-                                        {selectedTicketForModal && <TicketDetails ticket={selectedTicketForModal} />}
+                                        {selectedTicketForModal && <TicketDetails ticket={selectedTicketForModal} is_content={true} />}
                                     </div>
                                 </Dialog.Panel>
                             </Transition.Child>

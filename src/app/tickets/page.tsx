@@ -119,10 +119,6 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
           </Link>
         </h3>
 
-        {ticket.short_desc && (
-          <p className="text-gray-600 text-sm mb-3 line-clamp-2">{ticket.short_desc}</p>
-        )}
-
         {/* Price */}
         <div className="mb-4">
           {hasDiscount ? (
