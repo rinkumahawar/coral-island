@@ -166,6 +166,18 @@ const CheckoutPage: React.FC = () => {
             return;
         }
         
+        // Additional manual validation for phone field
+        const phoneValue = form.getValues('phone');
+        if (!phoneValue || phoneValue.trim() === '') {
+            form.setError('phone', { type: 'required', message: 'Phone number is required' });
+            setProcessing(false);
+            setIsCreatingBooking(false);
+            setToastMessage('Please fill in all required customer details.');
+            setToastType('error');
+            setShowToast(true);
+            return;
+        }
+        
         const formData = form.getValues();
         try {
             // 1. Call vendor signup API
@@ -206,7 +218,7 @@ const CheckoutPage: React.FC = () => {
                     country_code: Number(formData.phoneCountryCode?.replace('+', '') || '66'),
                     nationality: formData.nationality,
                     pickup_hotel_name: formData.hotelName,
-                    airport: formData.airport,
+                    airport: formData.airport || '',
                     messanger_type: 'whatsapp',
                     messanger_country_code: Number(formData.phoneCountryCode?.replace('+', '') || '66'),
                     messanger_type_no: Number(formData.phone) || 0
@@ -300,7 +312,16 @@ const CheckoutPage: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 relative">
                     {/* Left Column - Forms */}
                     <div className="lg:col-span-2 space-y-6 sm:space-y-8 lg:space-y-10">
-                        <CustomerForm form={form as UseFormReturn<any>} />
+                        <CustomerForm 
+                            form={form as UseFormReturn<any>} 
+                            onPhoneValidation={(isValid) => {
+                                if (!isValid) {
+                                    form.setError('phone', { type: 'required', message: 'Phone number is required' });
+                                } else {
+                                    form.clearErrors('phone');
+                                }
+                            }}
+                        />
                         <PaymentMethodSelector
                             selectedMethod={paymentMethod as any}
                             onMethodSelect={setPaymentMethod}

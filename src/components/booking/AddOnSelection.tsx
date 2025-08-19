@@ -60,18 +60,18 @@ const AddOnSelection: React.FC<AddOnSelectionProps> = ({
                             {/* Mobile: Horizontal Layout, Desktop: Vertical Layout */}
                             <div className="flex sm:flex-col">
                                 {/* Image - Small on mobile, full width on desktop */}
-                                <div className="relative w-20 h-20 sm:w-full sm:h-32 overflow-hidden flex-shrink-0">
+                                {/* <div className="relative w-20 h-20 sm:w-full sm:h-32 overflow-hidden flex-shrink-0">
                                     <img
                                         src="/images/addons.jpg" 
                                         alt={addon.name}
                                         className="w-full h-full object-cover"
                                     />
-                                    {/* <div className="absolute top-1 sm:top-2 right-1 sm:right-2">
+                                    <div className="absolute top-1 sm:top-2 right-1 sm:right-2">
                                         <span className={`px-0.5 sm:px-1 py-0.5 text-[10px] sm:text-xs font-medium rounded-full ${isAddonAvailableForTicket ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
                                             {isAddonAvailableForTicket ? 'Available' : 'Not Available'}
                                         </span>
-                                    </div> */}
-                                </div>
+                                    </div>
+                                </div> */}
                                 
                                 {/* Content - Takes remaining space on mobile */}
                                 <div className="flex-1 p-2 sm:p-3 flex flex-col justify-between relative">

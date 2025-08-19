@@ -14,21 +14,39 @@ interface CustomerFormData {
   hotelName: string;
   country: string;
   nationality: string;
-  airport: string;
+  airport?: string; // Made optional
 }
 
 interface CustomerFormProps {
   form: UseFormReturn<CustomerFormData>;
+  onPhoneValidation?: (isValid: boolean) => void;
 }
 
 const CustomerForm: React.FC<CustomerFormProps> = ({
   form,
+  onPhoneValidation
 }) => {
-  const { register, setValue, formState: { errors } } = form;
+  const { register, setValue, formState: { errors }, setError, clearErrors } = form;
   const phoneInputRef = useRef<HTMLInputElement>(null);
   const phoneInstanceRef = useRef<any>(null);
   const [nationalities, setNationalities] = useState<Nationality[]>([]);
   const [isLoadingNationalities, setIsLoadingNationalities] = useState(true);
+
+  // Function to manually validate phone field
+  const validatePhone = () => {
+    const phoneValue = phoneInputRef.current?.value || '';
+    if (phoneValue.trim() === '') {
+      setError('phone', { type: 'required', message: 'Phone number is required' });
+      onPhoneValidation?.(false);
+      return false;
+    } else {
+      clearErrors('phone');
+      onPhoneValidation?.(true);
+      return true;
+    }
+  };
+
+
 
   useEffect(() => {
     if (phoneInputRef.current && !phoneInstanceRef.current) {
@@ -45,7 +63,15 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
 
       // Add event listener for phone number change
       const handlePhoneChange = () => {
-        setValue('phone', phoneInputRef.current?.value || '');
+        const phoneValue = phoneInputRef.current?.value || '';
+        setValue('phone', phoneValue);
+        
+        // Trigger validation for the phone field
+        if (phoneValue.trim() === '') {
+          setError('phone', { type: 'required', message: 'Phone number is required' });
+        } else {
+          clearErrors('phone');
+        }
       };
 
       phoneInputRef.current.addEventListener('countrychange', handleCountryChange);
@@ -77,19 +103,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
         setNationalities(data);
       } catch (error) {
         console.error('Failed to fetch nationalities:', error);
-        // Fallback to default nationalities if API fails
-        setNationalities([
-          { id: 1, name: 'Thailand' },
-          { id: 2, name: 'United States' },
-          { id: 3, name: 'United Kingdom' },
-          { id: 4, name: 'Australia' },
-          { id: 5, name: 'India' },
-          { id: 6, name: 'Singapore' },
-          { id: 7, name: 'Malaysia' },
-          { id: 8, name: 'Japan' },
-          { id: 9, name: 'China' },
-          { id: 10, name: 'South Korea' },
-        ]);
+        setNationalities([]);
       } finally {
         setIsLoadingNationalities(false);
       }
@@ -141,8 +155,11 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
             <input
               ref={phoneInputRef}
               type="tel"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-              // Do not use {...register('phone', ...)} here to avoid ref conflict
+              className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm ${
+                errors.phone 
+                  ? 'border-red-500 focus:ring-red-500 focus:border-red-500' 
+                  : 'border-gray-300'
+              }`}
             />
             {errors.phone && (
               <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>
@@ -179,7 +196,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
                 {isLoadingNationalities ? 'Loading nationalities...' : 'Select your nationality'}
               </option>
               {nationalities.map((nationality) => (
-                <option key={nationality.id} value={nationality.name}>
+                <option key={nationality.id} value={nationality.id}>
                   {nationality.name}
                 </option>
               ))}
@@ -188,18 +205,11 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
               <p className="text-red-500 text-xs mt-1">{errors.nationality.message}</p>
             )}
           </div>
-          <div>
-            <Input
-              label="Airport"
-              id="airport"
-              {...register('airport', { required: 'Airport is required' })}
-              error={errors.airport?.message}
-              required
-            />
-          </div>
         </div>
         {/* Hidden field for phoneCountryCode */}
         <input type="hidden" {...register('phoneCountryCode')} />
+        {/* Hidden field for phone validation */}
+        <input type="hidden" {...register('phone', { required: 'Phone number is required' })} />
       </form>
     </Card>
   );

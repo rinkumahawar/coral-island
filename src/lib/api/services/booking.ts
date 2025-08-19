@@ -19,7 +19,7 @@ export interface BookingRequest {
     country_code: number;
     nationality: string;
     pickup_hotel_name: string;
-    airport: string;
+    airport?: string; // Made optional
     messanger_type: string;
     messanger_country_code: number;
     messanger_type_no: number;
