@@ -56,7 +56,7 @@ const EventInformation: React.FC<EventInformationProps> = ({ event }) => (
           </div>
           <div>
             <p className="text-sm text-gray-500">Location</p>
-            <p className="font-medium text-gray-900">{event.address}</p>
+            <p className="font-medium text-gray-900">{event.location?.name}</p>  
           </div>
         </div>
         <div className="flex items-center">

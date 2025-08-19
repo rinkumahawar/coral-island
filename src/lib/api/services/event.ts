@@ -69,6 +69,9 @@ export interface EventData {
       content: string;
     };
   };
+  location: {
+    name: string;
+  };
   content: string;
   highlight_content: string;
   address: string;
