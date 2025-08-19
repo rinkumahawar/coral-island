@@ -324,7 +324,7 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
                     
                     return validHighlights.length > 0 ? (
                       <div className="space-y-1 sm:space-y-2">
-                        <h4 className="text-xs sm:text-sm font-semibold text-blue-700">Highlights</h4>
+                        <h4 className="text-xs sm:text-sm font-semibold text-blue-700">Key Benefits</h4>
                         <ul className="list-disc list-inside space-y-0.5 sm:space-y-1">
                           {validHighlights.map((highlight, index) => (
                             <li key={index} className="text-xs sm:text-sm text-gray-600">
