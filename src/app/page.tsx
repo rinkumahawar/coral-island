@@ -6,10 +6,10 @@ import { EventService } from '@/lib/api/services/event';
 import EventTickets from '../components/sections/FeaturedTourPackages';
 import EventInformation from '@/components/sections/EventInformation';
 import EventHighlights from '../components/sections/EventHighlights';
-import EventGallery from '../components/sections/EventGallery';
+import Gallery from '../components/sections/Gallery';
 import EventFaqs from '../components/sections/EventFaqs';
 import SecurityTrustPanel from '@/components/sections/SecurityTrustPanel';
-import EventExtraContent from '../components/sections/EventExtraContent';
+import TabContent from '../components/common/TabContent';
 import EventCustomerReviews from '../components/sections/EventCustomerReviews';
 import EventReviewStats from '../components/sections/EventReviewStats';
 import { Metadata } from 'next';
@@ -18,6 +18,7 @@ import BookingCTA from '@/components/sections/BookingCTA';
 import Script from 'next/script';
 import { Suspense } from 'react';
 import { HeroSkeleton, CardSkeleton } from '@/components/common/SkeletonLoader';
+import EventExtraContent from '@/components/sections/EventExtraContent';
 
 // Enable ISR for better performance - revalidate every 5 minutes
 export const revalidate = 300; // 5 minutes
@@ -312,12 +313,17 @@ export default async function HomePage() {
 
             {eventData.gallery_images && eventData.gallery_images.length > 0 && (
               <Suspense fallback={<CardSkeleton />}>
-                <EventGallery gallery={eventData.gallery_images} />
+                <Gallery images={eventData.gallery_images} />
               </Suspense>
             )}
             {eventData.extra_content && (
               <Suspense fallback={<CardSkeleton />}>
                 <EventExtraContent extraContent={eventData.extra_content} maxWords={100} />
+              </Suspense>
+            )}
+            {eventData.tabbed_content && (
+              <Suspense fallback={<CardSkeleton />}>
+                <TabContent content={eventData.tabbed_content} maxWords={100} />
               </Suspense>
             )}
 

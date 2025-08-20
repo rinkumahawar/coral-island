@@ -69,6 +69,13 @@ export interface EventData {
       content: string;
     };
   };
+  tabbed_content: {
+    [key: string]: {
+      type: string;
+      title: string;
+      content: string;
+    };
+  };
   location: {
     name: string;
   };
