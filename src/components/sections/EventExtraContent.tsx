@@ -83,7 +83,7 @@ const EventExtraContent: React.FC<EventExtraContentProps> = ({ extraContent, max
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {Object.entries(extraContent).map(([key, item], idx) => {
           const { content: displayContent, isTruncated } = truncateContent((item as any).content, maxWords);
           

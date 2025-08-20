@@ -323,7 +323,7 @@ export default async function HomePage() {
             )}
             {eventData.tabbed_content && (
               <Suspense fallback={<CardSkeleton />}>
-                <TabContent content={eventData.tabbed_content} maxWords={100} />
+                <TabContent title={eventData.title} content={eventData.tabbed_content} maxWords={100} />
               </Suspense>
             )}
 

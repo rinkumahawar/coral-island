@@ -7,11 +7,13 @@ import Card from '../base/Card';
 import '../../styles/html-content.css';
 
 interface TabContentProps {
+	title: string;
 	content: any;
 	maxWords?: number;
 }
 
 const TabContent: React.FC<TabContentProps> = ({ 
+	title,
 	content, 
 	maxWords = 100 
 }) => {
@@ -81,7 +83,7 @@ const TabContent: React.FC<TabContentProps> = ({
 
 	return (
 		<>
-			<Card title="Additional Information" className="mb-8">
+			<Card title={`Trip your ${title}`} className="mb-8">
 				{/* Tab Navigation */}
 				<div className="border-b border-gray-200 mb-6">
 					<nav className="-mb-px flex space-x-8 overflow-x-auto">
