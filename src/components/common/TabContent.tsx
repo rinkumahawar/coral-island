@@ -76,6 +76,7 @@ const TabContent: React.FC<TabContentProps> = ({
 	if (!activeContent) return null;
 
 	const [activeKey, activeItem] = activeContent;
+	const img_url = (activeItem as any).img_url;
 	const { content: displayContent, isTruncated } = truncateContent(
 		(activeItem as any).content, 
 		maxWords
@@ -105,22 +106,38 @@ const TabContent: React.FC<TabContentProps> = ({
 
 				{/* Tab Content */}
 				<div className="min-h-[200px]">
-					<div className="html-content">
-						<div 
-							dangerouslySetInnerHTML={{ 
-								__html: displayContent
-							}} 
-						/>
-						{isTruncated && (
-							<div className="mt-6">
-								<button
-									onClick={() => openModal(activeItem)}
-									className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
-								>
-									Read Full Content
-								</button>
+					<div className={`flex flex-col md:flex-row gap-6 ${img_url ? '' : 'md:flex-row'}`}>
+						{/* Image Section - Left Side (only if image exists) */}
+						{img_url && (
+							<div className="md:w-1/3 flex-shrink-0">
+								<img 
+									src={img_url} 
+									alt={title}
+									className="w-full h-64 md:h-auto object-cover rounded-lg shadow-md"
+								/>
 							</div>
 						)}
+						
+						{/* Content Section - Right Side or Full Width */}
+						<div className={img_url ? "md:w-2/3 flex-1" : "w-full"}>
+							<div className="html-content">
+								<div 
+									dangerouslySetInnerHTML={{ 
+										__html: displayContent
+									}} 
+								/>
+								{isTruncated && (
+									<div className="mt-6">
+										<button
+											onClick={() => openModal(activeItem)}
+											className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
+										>
+											Read Full Content
+										</button>
+									</div>
+								)}
+							</div>
+						</div>
 					</div>
 				</div>
 			</Card>

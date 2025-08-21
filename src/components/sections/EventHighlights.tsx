@@ -9,7 +9,7 @@ interface EventHighlightsProps {
 }
 
 const EventHighlights: React.FC<EventHighlightsProps> = ({ highlight }) => (
-  <Card title="Event Highlights" className="mb-8">
+  <Card title={`${process.env.NEXT_PUBLIC_PAGE_NAME} Highlights`} className="mb-8">
     <div className="prose max-w-none text-gray-700 html-content" dangerouslySetInnerHTML={{ __html: highlight }} />
   </Card>
 );

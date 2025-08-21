@@ -318,7 +318,7 @@ const EventTickets: React.FC<EventTicketsProps> = ({ tickets }) => {
     <section>
       <div className="container">
         <div className="mb-6 lg:mb-8">
-          <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-2 text-center lg:text-left">Event Tickets</h2>
+          <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-2 text-center lg:text-left">{process.env.NEXT_PUBLIC_PAGE_NAME} Tickets</h2>
         </div>
         <div className="flex flex-col space-y-4 lg:space-y-6">
           {tickets.map((ticket, index) => (

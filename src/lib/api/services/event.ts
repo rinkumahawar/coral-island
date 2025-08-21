@@ -66,6 +66,7 @@ export interface EventData {
     [key: string]: {
       type: string;
       title: string;
+      img_url: string;
       content: string;
     };
   };
@@ -73,6 +74,7 @@ export interface EventData {
     [key: string]: {
       type: string;
       title: string;
+      img_url: string;
       content: string;
     };
   };
