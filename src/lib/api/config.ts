@@ -1,8 +1,8 @@
 export const API_CONFIG = {
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || '',
   endpoints: {
-    event: 'page/event/coral-island-tour-tickets-unforgettable-day-trip-from-pattaya',
-    tickets: 'page/event/coral-island-tour-tickets-unforgettable-day-trip-from-pattaya/tickets',
+    event: `page/event/${process.env.NEXT_PUBLIC_PAGE_SLUG}`,
+    tickets: `page/event/${process.env.NEXT_PUBLIC_PAGE_SLUG}/tickets`,
     ticketDetails: 'page/tickets/:slug',
     nationalities: 'nationalities',
     token: 'token',
