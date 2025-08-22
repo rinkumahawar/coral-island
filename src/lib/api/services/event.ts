@@ -67,6 +67,7 @@ export interface EventData {
       type: string;
       title: string;
       img_url: string;
+      layout: number;
       content: string;
     };
   };

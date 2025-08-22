@@ -81,36 +81,53 @@ const EventExtraContent: React.FC<EventExtraContentProps> = ({ extraContent, max
     return { content: truncatedContent, isTruncated: true };
   };
 
+  const getGridCols = (layout?: string | number) => {
+    if (layout === "2" || layout === 2) return "lg:grid-cols-2";
+    if (layout === "3" || layout === 3) return "lg:grid-cols-3";
+    if (layout === "4" || layout === 4) return "lg:grid-cols-4";
+    return "lg:grid-cols-3"; // default fallback
+  };
+
+  // Group items by layout
+  const groupedItems = Object.entries(extraContent).reduce((acc, [key, item]) => {
+    const layout = (item as any).layout || "3";
+    if (!acc[layout]) acc[layout] = [];
+    acc[layout].push({ key, item });
+    return acc;
+  }, {} as Record<string, Array<{ key: string; item: any }>>);
+
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {Object.entries(extraContent).map(([key, item], idx) => {
-          const { content: displayContent, isTruncated } = truncateContent((item as any).content, maxWords);
-          
-          return (
-            <Card key={idx} title={(item as any).title} fullHeight>
-              <div className="html-content flex flex-col h-full">
-                <div 
-                  className="flex-1"
-                  dangerouslySetInnerHTML={{ 
-                    __html: displayContent
-                  }} 
-                />
-                {isTruncated && (
-                  <div className="mt-auto pt-4">
-                    <button
-                      onClick={() => openModal(item)}
-                      className="text-green-600 hover:text-green-800 font-medium underline focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                    >
-                      Read More
-                    </button>
-                  </div>
-                )}
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+      {Object.entries(groupedItems).map(([layout, items]) => (
+        <div key={layout} className={`grid grid-cols-1 ${getGridCols(layout)} gap-6 mb-8`}>
+          {items.map(({ key, item }, idx) => {
+            const { content: displayContent, isTruncated } = truncateContent((item as any).content, maxWords);
+            
+            return (
+              <Card key={key} title={(item as any).title} fullHeight>
+                <div className="html-content flex flex-col h-full">
+                  <div 
+                    className="flex-1"
+                    dangerouslySetInnerHTML={{ 
+                      __html: displayContent
+                    }} 
+                  />
+                  {isTruncated && (
+                    <div className="mt-auto pt-4">
+                      <button
+                        onClick={() => openModal(item)}
+                        className="text-green-600 hover:text-green-800 font-medium underline focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                      >
+                        Read More
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      ))}
 
       {/* Responsive Modal */}
       <Transition show={isModalOpen} as={React.Fragment}>
