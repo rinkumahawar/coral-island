@@ -246,9 +246,17 @@
 /* Images */
 .html-content img {
   max-width: 100%;
-  height: auto;
+  height: auto; /* Auto height on mobile */
+  object-fit: cover; /* Maintains aspect ratio while filling container */
   border-radius: 0.375rem;
   margin: 1rem 0;
+}
+
+/* Fixed height on larger screens */
+@media (min-width: 768px) {
+  .html-content img {
+    height: 300px;
+  }
 }
 
 /* Responsive adjustments */

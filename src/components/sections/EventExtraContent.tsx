@@ -88,15 +88,16 @@ const EventExtraContent: React.FC<EventExtraContentProps> = ({ extraContent, max
           const { content: displayContent, isTruncated } = truncateContent((item as any).content, maxWords);
           
           return (
-            <Card key={idx} title={(item as any).title}>
-              <div className="html-content">
+            <Card key={idx} title={(item as any).title} fullHeight>
+              <div className="html-content flex flex-col h-full">
                 <div 
+                  className="flex-1"
                   dangerouslySetInnerHTML={{ 
                     __html: displayContent
                   }} 
                 />
                 {isTruncated && (
-                  <div className="mt-4">
+                  <div className="mt-auto pt-4">
                     <button
                       onClick={() => openModal(item)}
                       className="text-green-600 hover:text-green-800 font-medium underline focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
