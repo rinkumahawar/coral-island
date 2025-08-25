@@ -5,23 +5,12 @@
  */
 
 export {
-  // Generic money formatting functions
+  // Core money formatting functions
   formatMoney,
-  formatMoneyAmount,
-  formatMoneySymbol,
+  formatMoneyForCurrency,
   formatMoneyCompact,
-  formatMoneyRange,
-  formatMoneyCustom,
-  parseMoney,
-  isValidMoneyAmount,
   
-  // Thai Baht convenience functions (backward compatibility)
-  formatThaiBaht,
-  formatThaiBahtAmount,
-  formatThaiBahtSymbol,
-  formatThaiBahtCompact,
-  formatThaiBahtRange,
-  formatThaiBahtCustom,
-  parseThaiBaht,
-  isValidThaiBahtAmount
+  // Currency context functions
+  getCurrentCurrency,
+  getCurrentExchangeRate,
 } from '../money-format'; 

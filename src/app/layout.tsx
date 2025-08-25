@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
 import '../lib/fontawesome';
 import { BookingProvider } from '@/contexts/BookingContext';
+import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import FontAwesomeProvider from '@/components/common/FontAwesomeProvider';
 import Script from 'next/script';
 import { Metadata } from 'next';
@@ -152,7 +153,9 @@ export default function RootLayout({
 
         <FontAwesomeProvider>
           <BookingProvider>
-            {children}
+            <CurrencyProvider>
+              {children}
+            </CurrencyProvider>
           </BookingProvider>
         </FontAwesomeProvider>
       </body>

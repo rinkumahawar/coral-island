@@ -5,9 +5,14 @@ import Link from 'next/link';
 
 const MobileMenu: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAttractionsOpen, setIsAttractionsOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const toggleAttractions = () => {
+    setIsAttractionsOpen(!isAttractionsOpen);
   };
 
   return (
@@ -62,6 +67,57 @@ const MobileMenu: React.FC = () => {
               >
                 Tickets
               </Link>
+              
+              {/* Attractions Section */}
+              <div className="border-b border-blue-800 pb-3">
+                <button
+                  onClick={toggleAttractions}
+                  className="w-full text-left hover:text-blue-200 transition py-3 text-lg font-medium flex justify-between items-center"
+                >
+                  Attractions
+                  <svg 
+                    className={`w-5 h-5 transition-transform ${isAttractionsOpen ? 'rotate-180' : ''}`}
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {isAttractionsOpen && (
+                  <div className="ml-4 mt-2 space-y-2">
+                    <Link 
+                      href="/attractions/water-park" 
+                      className="block hover:text-blue-200 transition py-2 text-base"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Water Park
+                    </Link>
+                    <Link 
+                      href="/attractions/adventure-zone" 
+                      className="block hover:text-blue-200 transition py-2 text-base"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Adventure Zone
+                    </Link>
+                    <Link 
+                      href="/attractions/wildlife" 
+                      className="block hover:text-blue-200 transition py-2 text-base"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Wildlife
+                    </Link>
+                    <Link 
+                      href="/attractions/entertainment" 
+                      className="block hover:text-blue-200 transition py-2 text-base"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Entertainment
+                    </Link>
+                  </div>
+                )}
+              </div>
+              
               <Link 
                 href="#about" 
                 className="hover:text-blue-200 transition py-3 text-lg font-medium"

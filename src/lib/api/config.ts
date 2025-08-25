@@ -11,6 +11,7 @@ export const API_CONFIG = {
     paymentCallback: 'payment/callback',
     paymentDetails: 'payment',
     paymentConfirm: 'payment/confirm',
+    currencyRates: 'currency-rates/:currency',
   },    
   defaultHeaders: {
     'Content-Type': 'application/json',
