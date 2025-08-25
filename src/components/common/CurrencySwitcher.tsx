@@ -6,6 +6,8 @@ import { faChevronDown, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { cn } from '@/lib/utils';
 import { CurrencyService } from '@/lib/api/services/currency';
 import { useCurrency, Currency } from '@/contexts/CurrencyContext';
+import { Dialog, Transition } from '@headlessui/react';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 export interface CurrencySwitcherProps {
   onCurrencyChange?: (currency: Currency, rates?: any) => void;
@@ -126,7 +128,6 @@ const CurrencySwitcher: React.FC<CurrencySwitcherProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const dropdownRef = useRef<HTMLDivElement>(null);
   
   const {
     selectedCurrency,
@@ -137,17 +138,6 @@ const CurrencySwitcher: React.FC<CurrencySwitcherProps> = ({
     setLoading,
     setError
   } = useCurrency();
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleCurrencySelect = async (currency: Currency) => {
     if (currency.code === selectedCurrency.code) {
@@ -194,119 +184,154 @@ const CurrencySwitcher: React.FC<CurrencySwitcherProps> = ({
   };
 
   return (
-    <div className={cn('relative inline-block', className)} ref={dropdownRef}>
-      <button
-        type="button"
-        onClick={() => !disabled && !isLoading && setIsOpen(!isOpen)}
-        disabled={disabled || isLoading}
-        className={cn(
-          'flex items-center justify-between w-full rounded-xl shadow-md transition-all duration-300',
-          'focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2',
-          'hover:shadow-lg active:scale-[0.98]',
-          sizeClasses[size],
-          variantClasses[variant],
-          (disabled || isLoading) && 'opacity-50 cursor-not-allowed',
-          !disabled && !isLoading && 'cursor-pointer'
-        )}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-        aria-label="Select currency"
-      >
-        <div className="flex items-center space-x-3">
-          <FontAwesomeIcon
-            icon={faGlobe}
-            className="text-emerald-500 text-lg"
-          />
-          <div className="flex items-center space-x-2">
-            {showFlag && selectedCurrency.flag && (
-              <span className="text-xl font-medium">{selectedCurrency.flag}</span>
-            )}
-            {showName && (
-              <span className="hidden sm:inline text-gray-700 font-medium">
-                {selectedCurrency.code}
-              </span>
-            )}
-            {isLoading && (
-              <div className="ml-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-500"></div>
-              </div>
-            )}
-          </div>
-        </div>
-        <FontAwesomeIcon
-          icon={faChevronDown}
+    <>
+      <div className={cn('relative inline-block', className)}>
+        <button
+          type="button"
+          onClick={() => !disabled && !isLoading && setIsOpen(true)}
+          disabled={disabled || isLoading}
           className={cn(
-            'text-gray-500 transition-all duration-300 ml-2',
-            isOpen && 'rotate-180 text-emerald-500'
+            'flex items-center justify-between w-full rounded-xl shadow-md transition-all duration-300',
+            'focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2',
+            'hover:shadow-lg active:scale-[0.98]',
+            sizeClasses[size],
+            variantClasses[variant],
+            (disabled || isLoading) && 'opacity-50 cursor-not-allowed',
+            !disabled && !isLoading && 'cursor-pointer'
           )}
-        />
-      </button>
-
-      {error && (
-        <div className="absolute mt-2 px-3 py-2 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm z-50 right-0">
-          {error}
-        </div>
-      )}
-
-      {isOpen && (
-        <div className={cn(
-          'absolute mt-2 bg-white border border-gray-300 rounded-md shadow-lg z-50',
-          'right-0',
-          'w-250 w-7xl'
-        )}>
-        
-          <div className="py-1">
-            <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide border-b border-gray-200">
-              Select Currency
-            </div>
-            {showSearch && (
-              <div className="px-4 py-2">
-                <input
-                  type="text"
-                  placeholder="Search currencies..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            )}
-            <div className="max-h-96 overflow-y-auto px-4 pb-4">
-             <div className="grid grid-cols-4 gap-2">
-                {filteredCurrencies.map((currency) => (
-                  <button
-                    key={currency.code}
-                    onClick={() => handleCurrencySelect(currency)}
-                    disabled={isLoading}
-                    className={cn(
-                      'w-full text-left p-2 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150 rounded-md border border-gray-200',
-                      'flex flex-col items-start space-y-1',
-                      selectedCurrency.code === currency.code && 'bg-blue-100 text-blue-700 border-blue-300',
-                      isLoading && 'opacity-50 cursor-not-allowed'
-                    )}
-                  >
-                    <div className="flex items-center space-x-1 w-full">
-                      {showFlag && currency.flag && (
-                        <span className="text-sm">{currency.flag}</span>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-medium text-gray-900 truncate">
-                          {currency.code}
-                        </div>
-                      </div>
-                    </div>
-                    {showName && (
-                      <div className="text-xs text-gray-600 leading-tight truncate">
-                        {currency.name}
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
+          aria-haspopup="dialog"
+          aria-label="Select currency"
+        >
+          <div className="flex items-center space-x-3">
+         
+            <div className="flex items-center space-x-2">
+              {showFlag && selectedCurrency.flag && (
+                <span className="text-xl font-medium">{selectedCurrency.flag}</span>
+              )}
+              {showName && (
+                <span className="hidden sm:inline text-gray-700 font-medium">
+                  {selectedCurrency.code}
+                </span>
+              )}
+              {isLoading && (
+                <div className="ml-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-500"></div>
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      )}
-    </div>
+          <FontAwesomeIcon
+            icon={faChevronDown}
+            className="text-gray-500 transition-all duration-300 ml-2"
+          />
+        </button>
+
+        {error && (
+          <div className="absolute mt-2 px-3 py-2 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm z-50 right-0">
+            {error}
+          </div>
+        )}
+      </div>
+
+      {/* Currency Selection Modal */}
+      <Transition show={isOpen} as={React.Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={() => setIsOpen(false)}>
+          <Transition.Child
+            as={React.Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-50" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="flex min-h-full items-end md:items-center justify-center p-0 md:p-4 md:p-6">
+              <Transition.Child
+                as={React.Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-full"
+                enterTo="opacity-100 translate-y-0"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0"
+                leaveTo="opacity-0 translate-y-full"
+              >
+                <Dialog.Panel className="w-full bg-white shadow-xl transition-all flex flex-col md:max-w-4xl md:rounded-2xl md:h-[80vh] h-[85vh] rounded-t-3xl">
+                  {/* Handle Bar - Mobile Only */}
+                  <div className="md:hidden flex justify-center pt-3 pb-2">
+                    <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+                  </div>
+                  
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200">
+                    <Dialog.Title as="h3" className="text-lg md:text-xl font-semibold text-gray-900">
+                      Select Currency
+                    </Dialog.Title>
+                    <button
+                      onClick={() => setIsOpen(false)}
+                      className="rounded-full p-2 hover:bg-gray-100 transition-colors"
+                      aria-label="Close modal"
+                    >
+                      <XMarkIcon className="h-5 w-5 md:h-6 md:w-6 text-gray-500" />
+                    </button>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="flex-1 overflow-y-auto p-4 md:p-6">
+                    {showSearch && (
+                      <div className="mb-4">
+                        <input
+                          type="text"
+                          placeholder="Search currencies..."
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                      </div>
+                    )}
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {filteredCurrencies.map((currency) => (
+                        <button
+                          key={currency.code}
+                          onClick={() => handleCurrencySelect(currency)}
+                          disabled={isLoading}
+                          className={cn(
+                            'w-full text-left p-3 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150 rounded-lg border border-gray-200',
+                            'flex flex-col items-start space-y-2',
+                            selectedCurrency.code === currency.code && 'bg-blue-100 text-blue-700 border-blue-300',
+                            isLoading && 'opacity-50 cursor-not-allowed'
+                          )}
+                        >
+                          <div className="flex items-center space-x-2 w-full">
+                            {showFlag && currency.flag && (
+                              <span className="text-lg">{currency.flag}</span>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium text-gray-900 truncate">
+                                {currency.code}
+                              </div>
+                            </div>
+                          </div>
+                          {showName && (
+                            <div className="text-xs text-gray-600 leading-tight truncate w-full">
+                              {currency.name}
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
   );
 };
 

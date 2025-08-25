@@ -85,8 +85,18 @@ const HomeHeader: React.FC = () => {
             />
           </div>
 
-          {/* Mobile Menu Button */}
-          <MobileMenu />
+          {/* Mobile Menu Button and Currency Switcher */}
+          <div className="md:hidden flex items-center space-x-3">
+            <CurrencySwitcher
+              variant="minimal"
+              size="sm"
+              showFlag={true}
+              showName={false}
+              showSearch={false}
+              className="text-white"
+            />
+            <MobileMenu />
+          </div>
         </nav>
       </div>
     </header>
