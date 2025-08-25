@@ -33,8 +33,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       };
     }
     
-
-    
     // Use API data for metadata
     const title = ticket.seo_data?.seo_title || ticket.title || undefined;
     const description = ticket.seo_data?.seo_desc || ticket.content || undefined;
@@ -100,6 +98,7 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
   
   let ticket: TicketData | null = null;
   let error: string | null = null;
+  let otherTickets: TicketData[] = [];
 
   try {
     const response = await TicketService.getTicketDetails(slug);
@@ -108,8 +107,16 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
     } else {
       ticket = response;
     }
+
+    // Fetch other tickets to show in sidebar
+    try {
+      const allTicketsResponse = await TicketService.getEventTickets();
+      otherTickets = allTicketsResponse.tickets.filter(t => t.slug !== slug).slice(0, 4);
+    } catch (ticketListError) {
+      console.warn('Failed to fetch other tickets:', ticketListError);
+      otherTickets = [];
+    }
   } catch (err: any) {
-    
     if (err instanceof ApiError) {
       error = err.message;
     } else if (err.message) {
@@ -117,7 +124,6 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
     } else {
       error = 'An unexpected error occurred while fetching ticket data';
     }
-    
   }
 
   if (error || !ticket) {
@@ -129,7 +135,6 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
   const hasDiscount = salePrice < basePrice;
 
   const formatDuration = (duration: string) => {
-    // Check if duration is just a number (minutes)
     if (/^\d+$/.test(duration)) {
       const minutes = parseInt(duration);
       if (minutes < 60) {
@@ -142,8 +147,6 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
         return `${hours}h ${remainingMinutes}m`;
       }
     }
-    
-    // If it's already formatted (e.g., "2h 30m", "1.5h"), return as is
     return duration;
   };
 
@@ -227,7 +230,7 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
                 "name": faq.title,
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": faq.content.replace(/<[^>]*>/g, '') // Remove HTML tags for clean text
+                  "text": faq.content.replace(/<[^>]*>/g, '')
                 }
               }))
             })
@@ -273,36 +276,37 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
       ]} title={ticket.title || ''} />
       
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 pb-24 sm:pb-32 flex-1">
-
-                <div className="mx-auto">
-          {/* Ticket Header */}
-          <div className="bg-white rounded-lg shadow-lg p-3 sm:p-6 mb-4 sm:mb-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-              {/* Image */}
-              <div className="relative h-96">
-                {ticket.image?.file_path && (
-                  <Image
-                    src={ticket.image.file_path}
-                    alt={ticket.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover rounded-lg"
-                    priority={true}
-                  />
-                )}
-                {hasDiscount && (
-                  <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-red-500 text-white text-xs sm:text-sm font-bold px-2 sm:px-3 py-1 rounded">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 lg:gap-8">
+          {/* Main Content - Left Side */}
+          <div className="xl:col-span-3">
+            {/* Ticket Header */}
+            <div className="bg-white rounded-lg shadow-lg p-3 sm:p-6 mb-4 sm:mb-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                {/* Image */}
+                <div className="relative h-96">
+                  {ticket.image?.file_path && (
+                    <Image
+                      src={ticket.image.file_path}
+                      alt={ticket.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover rounded-lg"
+                      priority={true}
+                    />
+                  )}
+                  {hasDiscount && (
+                    <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-red-500 text-white text-xs sm:text-sm font-bold px-2 sm:px-3 py-1 rounded">
                       SALE
                     </div>
                   )}
-                {ticket.duration && (
-                  <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-10">
-                    <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium border border-blue-200 shadow-sm">
-                      <FontAwesomeIcon icon={faClock} className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                      {formatDuration(ticket.duration)}
-                    </span>
-                  </div>
-                )}
+                  {ticket.duration && (
+                    <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-10">
+                      <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium border border-blue-200 shadow-sm">
+                        <FontAwesomeIcon icon={faClock} className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                        {formatDuration(ticket.duration)}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Ticket Info */}
@@ -341,60 +345,137 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
                   })()}
                 </div>
               </div>
-            </div>
-            
-            {/* Gallery Section */}
-            {ticket.gallery_images && ticket.gallery_images.length > 0 && (
-              <div className="mt-4 sm:mt-6">
-                <EventGallery gallery={ticket.gallery_images} />
-              </div>
-            )}
+              
+              {/* Gallery Section */}
+              {ticket.gallery_images && ticket.gallery_images.length > 0 && (
+                <div className="mt-4 sm:mt-6">
+                  <EventGallery gallery={ticket.gallery_images} />
+                </div>
+              )}
 
-            {/* Ticket Details */}
-            <div className="bg-white rounded-lg shadow-lg p-3 sm:p-6">
-              <TicketDetails ticket={ticket} is_content={false} />
-            </div>
-
-            {/* FAQs Section */}
-            {ticket.faqs && ticket.faqs.length > 0 && (
-              <div className="mt-4 sm:mt-6">
-                <EventFaqs faqs={ticket.faqs} />
+              {/* Ticket Details */}
+              <div className="bg-white rounded-lg shadow-lg p-3 sm:p-6">
+                <TicketDetails ticket={ticket} is_content={false} />
               </div>
-            )}
+
+              {/* FAQs Section */}
+              {ticket.faqs && ticket.faqs.length > 0 && (
+                <div className="mt-4 sm:mb-6">
+                  <EventFaqs faqs={ticket.faqs} />
+                </div>
+              )}
+            </div>
           </div>
 
-        {/* Fixed Navigation Buttons */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 py-2 px-3 sm:py-3 sm:px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex flex-row justify-between items-center">
-              {/* Ticket Price Display */}
-              <div className="flex flex-col items-start">
-                <span className="text-sm text-gray-600">Ticket Price</span>
-                {hasDiscount ? (
-                  <div className="flex items-center space-x-1 sm:space-x-2">
-                      <span className="text-lg font-bold text-red-600">{formatMoney(Number(salePrice))}</span>
-                    <span className="text-sm sm:text-sm text-gray-500 line-through">{formatMoney(Number(basePrice))}</span>
+          {/* Right Sidebar - Other Tickets */}
+          {otherTickets.length > 0 && (
+            <div className="xl:col-span-1">
+              <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 sticky top-4">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 sm:mb-6">Other Experiences</h3>
+                <div className="space-y-4">
+                  {otherTickets.map((otherTicket) => (
+                    <Link
+                      key={otherTicket.id}
+                      href={`/tickets/${otherTicket.slug}`}
+                      className="group block"
+                    >
+                      <div className="border border-gray-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-md transition-all duration-300">
+                        {/* Image */}
+                        <div className="relative h-32 rounded-lg overflow-hidden bg-gray-100 mb-3">
+                          {otherTicket.image?.file_path && (
+                            <Image
+                              src={otherTicket.image.file_path}
+                              alt={otherTicket.title}
+                              fill
+                              sizes="(max-width: 1280px) 100vw, 25vw"
+                              className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          )}
+                          {parseFloat(otherTicket.sale_price) < parseFloat(otherTicket.price) && (
+                            <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                              SALE
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Content */}
+                        <div className="space-y-2">
+                          <h4 className="text-sm sm:text-base font-semibold text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2">
+                            {otherTicket.title}
+                          </h4>
+                          
+                          {/* Price */}
+                          <div className="flex items-center space-x-2">
+                            {parseFloat(otherTicket.sale_price) < parseFloat(otherTicket.price) ? (
+                              <>
+                                <span className="text-base font-bold text-red-600">{formatMoney(Number(otherTicket.sale_price))}</span>
+                                <span className="text-sm text-gray-500 line-through">{formatMoney(Number(otherTicket.price))}</span>
+                              </>
+                            ) : (
+                              <span className="text-sm font-bold text-gray-800">{formatMoney(Number(otherTicket.price))}</span>
+                            )}
+                          </div>
+                          
+                          {/* Duration if available */}
+                          {otherTicket.duration && (
+                            <div className="flex items-center text-xs text-gray-600">
+                              <FontAwesomeIcon icon={faClock} className="w-3 h-3 mr-1" />
+                              {otherTicket.duration}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                  
+                  {/* View All Tickets Link */}
+                  <div className="pt-2">
+                    <Link
+                      href="/tickets"
+                      className="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
+                    >
+                      View All Tickets
+                      <FontAwesomeIcon icon={faTicket} className="ml-2 w-3 h-3" />
+                    </Link>
                   </div>
-                ) : (
-                  <span className="text-lg font-bold text-gray-800">{formatMoney(Number(basePrice))}</span>  
-                )}
+                </div>
               </div>
-
-              <Link
-                href={`/booking/${ticket.slug}`}
-                className="px-10 sm:px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors text-base sm:text-base"
-              >
-                <FontAwesomeIcon icon={faTicket} className="mr-1 sm:mr-2" />
-                Book Now
-              </Link>
             </div>
-          </div>
+          )}
         </div>
       </main>
+
+      {/* Fixed Navigation Buttons */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 py-2 px-3 sm:py-3 sm:px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex flex-row justify-between items-center">
+            {/* Ticket Price Display */}
+            <div className="flex flex-col items-start">
+              <span className="text-sm text-gray-600">Ticket Price</span>
+              {hasDiscount ? (
+                <div className="flex items-center space-x-1 sm:space-x-2">
+                  <span className="text-lg font-bold text-red-600">{formatMoney(Number(salePrice))}</span>
+                  <span className="text-sm text-gray-500 line-through">{formatMoney(Number(basePrice))}</span>
+                </div>
+              ) : (
+                <span className="text-lg font-bold text-gray-800">{formatMoney(Number(basePrice))}</span>  
+              )}
+            </div>
+
+            <Link
+              href={`/booking/${ticket.slug}`}
+              className="px-10 sm:px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors text-base sm:text-base"
+            >
+              <FontAwesomeIcon icon={faTicket} className="mr-1 sm:mr-2" />
+              Book Now
+            </Link>
+          </div>
+        </div>
+      </div>
 
       <Footer />
     </div>
   );
 };
 
-export default TicketDetailsPage; 
+export default TicketDetailsPage;
