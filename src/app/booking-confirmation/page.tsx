@@ -13,7 +13,7 @@ import BookingSupportSection from '@/components/booking/BookingSupportSection';
 import ImportantInformation from '@/components/booking/ImportantInformation';
 import { BookingService } from '@/lib/api/services/booking';
 import { TicketService, TicketData, EventData } from '@/lib/api/services/ticket';
-import { formatMoney } from '@/lib/money-format';
+import FormatMoney from '@/components/common/FormatMoney';
 
 const BookingConfirmationContent: React.FC = () => {
     const [showPrintView, setShowPrintView] = useState(false);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { formatMoney } from "@/lib/money-format";
+import FormatMoney from '@/components/common/FormatMoney';
 
 interface OmiseCheckoutProps {
   amount: number; // Amount in satangs
@@ -103,7 +103,7 @@ const OmiseCheckout: React.FC<OmiseCheckoutProps> = ({
         <div className="mb-4">
           <p className="text-gray-600 mb-2">Amount to pay:</p>
           <p className="text-2xl font-bold text-gray-900">
-            {formatMoney(Number(amount))}
+            <FormatMoney amount={Number(amount)} />
           </p>
         </div>
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
-import { formatMoney } from '@/lib/money-format';
+import FormatMoney from '@/components/common/FormatMoney';
 
 interface GuestInfo {
     adult: string;
@@ -38,7 +38,7 @@ const PaxSelection: React.FC<PaxSelectionProps> = ({
                     <div className="flex-1">
                         <h3 className="text-base sm:text-lg font-semibold text-gray-800">Adults</h3>
                         <p className="text-gray-500 text-xs sm:text-sm">{guestInfo?.adult || 'Age 12+'}</p>
-                        <p className="text-blue-600 font-medium text-sm sm:text-base">{formatMoney(Number(adultPrice))} per person</p>
+                        <p className="text-blue-600 font-medium text-sm sm:text-base"><FormatMoney amount={Number(adultPrice)} /> per person</p>
                     </div>
                     {/* Right Column - Controller */}
                     <div className="flex items-center ml-4">
@@ -66,7 +66,7 @@ const PaxSelection: React.FC<PaxSelectionProps> = ({
                     <div className="flex-1">
                         <h3 className="text-base sm:text-lg font-semibold text-gray-800">Children</h3>
                         <p className="text-gray-500 text-xs sm:text-sm">{guestInfo?.child || 'Age 4-11'}</p>
-                        <p className="text-blue-600 font-medium text-sm sm:text-base">{formatMoney(Number(childPrice))} per person</p> 
+                        <p className="text-blue-600 font-medium text-sm sm:text-base"><FormatMoney amount={Number(childPrice)} /> per person</p> 
                     </div>
                     {/* Right Column - Controller */}
                     <div className="flex items-center ml-4">

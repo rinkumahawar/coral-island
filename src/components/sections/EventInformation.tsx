@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Card from '../base/Card';
-import { formatMoney } from '@/lib/money-format';
+import FormatMoney from '@/components/common/FormatMoney';
 
 interface EventInformationProps {
   event: any;
@@ -67,7 +67,7 @@ const EventInformation: React.FC<EventInformationProps> = ({ event }) => (
           </div>
           <div>
             <p className="text-sm text-gray-500">Price</p>
-            <p className="font-bold text-2xl text-green-600">{formatMoney(Number(event.sale_price))}</p>
+            <p className="font-bold text-2xl text-green-600"><FormatMoney amount={Number(event.sale_price)} /></p>
           </div>
         </div>
       </div>

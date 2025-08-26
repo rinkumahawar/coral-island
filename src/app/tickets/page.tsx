@@ -6,11 +6,11 @@ import Footer from '@/components/layout/Footer';
 import { EventData, TicketData, TicketService } from '@/lib/api/services/ticket';
 import { ApiError } from '@/lib/api/types';
 import Script from 'next/script';
-import { formatMoney } from '@/lib/money-format';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { TicketCardSkeleton } from '@/components/common/SkeletonLoader';
 import Image from 'next/image';
+import FormatMoney from '@/components/common/FormatMoney';
 
 // Enable ISR for better performance - revalidate every 5 minutes
 export const revalidate = 300; // 5 minutes
@@ -123,11 +123,11 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket }) => {
         <div className="mb-4">
           {hasDiscount ? (
             <div className="flex items-center space-x-2">
-              <span className="text-lg font-bold text-red-600">{formatMoney(Number(salePrice))}</span>
-              <span className="text-sm text-gray-500 line-through">{formatMoney(Number(basePrice))}</span>
+              <span className="text-lg font-bold text-red-600"> <FormatMoney amount={Number(salePrice)} /></span>
+              <span className="text-sm text-gray-500 line-through"><FormatMoney amount={Number(basePrice)} /></span>
             </div>
           ) : (
-            <span className="text-lg font-bold text-gray-800">{formatMoney(Number(basePrice))}</span>
+            <span className="text-lg font-bold text-gray-800"><FormatMoney amount={Number(basePrice)} /></span>
           )}
         </div>
 

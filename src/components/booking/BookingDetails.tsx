@@ -16,7 +16,7 @@ import {
   faUtensils,
   faShieldAlt
 } from '@fortawesome/free-solid-svg-icons';
-import { formatMoney } from '@/lib/money-format';
+import FormatMoney from '@/components/common/FormatMoney';
 
 interface BookingDetailsProps {
   eventDetails: {
@@ -150,10 +150,10 @@ const BookingDetails: React.FC<BookingDetailsProps> = ({
               </div>
               <div className="flex-1">
                 <p className="font-medium">{addon.name}</p>
-                <p className="text-sm text-gray-600">{addon.number} × {formatMoney(Number(addon.price))}</p> 
+                <p className="text-sm text-gray-600">{addon.number} × <FormatMoney amount={Number(addon.price)} /></p> 
               </div>
               <div className="font-bold text-blue-700">
-                {formatMoney(Number(addon.total))}
+                <FormatMoney amount={Number(addon.total)} />
               </div>
             </div>
           ))}

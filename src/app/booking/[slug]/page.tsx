@@ -23,7 +23,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { EventData, TicketData, TicketService } from '@/lib/api/services/ticket';
 import { ApiError } from '@/lib/api/types';
-import { formatMoney } from '@/lib/money-format';
+import FormatMoney from '@/components/common/FormatMoney';
 
 interface TimeSlot {
   id: number;
@@ -680,10 +680,10 @@ const BookingPage: React.FC = () => {
                 {adultCount > 0 && (
                   <div className="flex justify-between items-center">
                     <span className="text-xs sm:text-base text-gray-600">
-                      Adults ({adultCount} × {formatMoney(Number(selectedTimeObject.adult_price))})
+                      Adults ({adultCount} × <FormatMoney amount={Number(selectedTimeObject.adult_price)} />)
                     </span>
                     <span className="text-xs sm:text-base font-medium text-gray-800">
-                      {formatMoney(Number(adultCount * parseFloat(selectedTimeObject.adult_price || '0')))}
+                      <FormatMoney amount={Number(adultCount * parseFloat(selectedTimeObject.adult_price || '0'))} />
                     </span>
                   </div>
                 )}
@@ -691,10 +691,10 @@ const BookingPage: React.FC = () => {
                 {childCount > 0 && (
                   <div className="flex justify-between items-center">
                     <span className="text-xs sm:text-base text-gray-600">
-                      Children ({childCount} × {formatMoney(Number(selectedTimeObject.child_price))})
+                      Children ({childCount} × <FormatMoney amount={Number(selectedTimeObject.child_price)} />)
                     </span>
                     <span className="text-xs sm:text-base font-medium text-gray-800">
-                      {formatMoney(Number(childCount * parseFloat(selectedTimeObject.child_price || '0')))}
+                      <FormatMoney amount={Number(childCount * parseFloat(selectedTimeObject.child_price || '0'))} />
                     </span>
                   </div>
                 )}
@@ -705,10 +705,10 @@ const BookingPage: React.FC = () => {
                     return (
                       <div key={addon.name} className="flex justify-between items-center">
                         <span className="text-xs sm:text-base text-gray-600">
-                          {addon.name} ({addon.quantity} × {formatMoney(Number(addon.price))})
+                          {addon.name} ({addon.quantity} × <FormatMoney amount={Number(addon.price)} />)
                         </span>
                         <span className="text-xs sm:text-base font-medium text-gray-800">
-                          {formatMoney(Number(addon.price * addon.quantity))}
+                          <FormatMoney amount={Number(addon.price * addon.quantity)} />
                         </span>
                       </div>
                     );
@@ -720,9 +720,9 @@ const BookingPage: React.FC = () => {
                 {calculateSubtotal() > 0 && (
                   <div className="flex justify-between items-center pt-2 border-t border-gray-200">
                     <span className="text-xs sm:text-base font-medium text-gray-700">Subtotal</span>
-                    <span className="text-xs sm:text-base font-medium text-gray-800">
-                      {formatMoney(Number(calculateSubtotal()))}
-                    </span>
+                                          <span className="text-xs sm:text-base font-medium text-gray-800">
+                        <FormatMoney amount={Number(calculateSubtotal())} />
+                      </span>
                   </div>
                 )}
 
@@ -730,9 +730,9 @@ const BookingPage: React.FC = () => {
                 {calculateAddonTotal() > 0 && (
                   <div className="flex justify-between items-center">
                     <span className="text-xs sm:text-base font-medium text-gray-700">Add-ons</span>
-                    <span className="text-xs sm:text-base font-medium text-gray-800">
-                      {formatMoney(Number(calculateAddonTotal()))}
-                    </span>
+                                          <span className="text-xs sm:text-base font-medium text-gray-800">
+                        <FormatMoney amount={Number(calculateAddonTotal())} />
+                      </span>
                   </div>
                 )}
 
@@ -740,7 +740,7 @@ const BookingPage: React.FC = () => {
                 <div className="flex justify-between items-center pt-2 sm:pt-3 border-t-2 border-gray-300">
                   <span className="text-base sm:text-xl font-bold text-gray-800">Total</span>
                   <span className="text-base sm:text-xl font-bold text-blue-600">
-                    {formatMoney(Number(calculateTotalPrice()))}
+                    <FormatMoney amount={Number(calculateTotalPrice())} />
                   </span>
                 </div>
               </div>
