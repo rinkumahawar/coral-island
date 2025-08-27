@@ -8,6 +8,7 @@ import { CurrencyService } from '@/lib/api/services/currency';
 import { useCurrency, Currency } from '@/contexts/CurrencyContext';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import ReactCountryFlag from 'react-country-flag';
 
 export interface CurrencySwitcherProps {
   onCurrencyChange?: (currency: Currency, rates?: any) => void;
@@ -116,6 +117,51 @@ const defaultCurrencies: Currency[] = [
   { code: 'VND', name: 'Vietnamese Dong', symbol: '₫', flag: '🇻🇳' },
 ];
 
+// Helper: map currency code to ISO 3166-1 alpha-2 country code (best-effort)
+const getCountryCodeFromCurrency = (currencyCode: string): string | null => {
+  const map: Record<string, string> = {
+    THB: 'TH', INR: 'IN', USD: 'US', EUR: 'EU', SGD: 'SG', AUD: 'AU', GBP: 'GB', AED: 'AE',
+    ALL: 'AL', AMD: 'AM', ARS: 'AR', AWG: 'AW', BBD: 'BB', BDT: 'BD', BMD: 'BM', BND: 'BN',
+    BOB: 'BO', BSD: 'BS', BWP: 'BW', BZD: 'BZ', CAD: 'CA', CHF: 'CH', CNY: 'CN', COP: 'CO',
+    CRC: 'CR', CZK: 'CZ', DKK: 'DK', DOP: 'DO', DZD: 'DZ', EGP: 'EG', ETB: 'ET', FJD: 'FJ',
+    GHS: 'GH', GIP: 'GI', GMD: 'GM', GTQ: 'GT', GYD: 'GY', HKD: 'HK', HNL: 'HN', HRK: 'HR',
+    HTG: 'HT', HUF: 'HU', IDR: 'ID', ILS: 'IL', JMD: 'JM', KES: 'KE', KGS: 'KG', KHR: 'KH',
+    KYD: 'KY', KZT: 'KZ', LAK: 'LA', LBP: 'LB', LKR: 'LK', LRD: 'LR', LSL: 'LS', MAD: 'MA',
+    MDL: 'MD', MKD: 'MK', MMK: 'MM', MNT: 'MN', MOP: 'MO', MUR: 'MU', MVR: 'MV', MWK: 'MW',
+    MXN: 'MX', MYR: 'MY', NAD: 'NA', NIO: 'NI', NOK: 'NO', NPR: 'NP', NZD: 'NZ', PEN: 'PE',
+    PGK: 'PG', PHP: 'PH', PKR: 'PK', QAR: 'QA', RUB: 'RU', SAR: 'SA', SCR: 'SC', SEK: 'SE',
+    SLL: 'SL', SOS: 'SO', SVC: 'SV', SZL: 'SZ', TTD: 'TT', TZS: 'TZ', UYU: 'UY', UZS: 'UZ',
+    YER: 'YE', ZAR: 'ZA', JPY: 'JP', VND: 'VN'
+  };
+  return map[currencyCode] || null;
+};
+
+// Helper function to render flags with fallback for Windows compatibility
+const renderFlag = (currency: Currency) => {
+  const countryCode = getCountryCodeFromCurrency(currency.code);
+  if (countryCode) {
+    return (
+      <ReactCountryFlag
+        svg
+        countryCode={countryCode}
+        title={currency.name}
+        style={{ width: '20px', height: '20px'}}
+      />
+    );
+  }
+  
+  // Fallback: Show country code in a styled box
+  return (
+    <span 
+      className="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-sm"
+      title={currency.name}
+      style={{ fontFamily: 'Arial, sans-serif' }}
+    >
+      {currency.code.slice(0, 2)}
+    </span>
+  );
+};
+
 const CurrencySwitcher: React.FC<CurrencySwitcherProps> = ({
   onCurrencyChange,
   className = '',
@@ -204,10 +250,8 @@ const CurrencySwitcher: React.FC<CurrencySwitcherProps> = ({
         >
           <div className="flex items-center space-x-3">
          
-            <div className="flex items-center space-x-2">
-              {showFlag && selectedCurrency.flag && (
-                <span className="text-xl font-medium">{selectedCurrency.flag}</span>
-              )}
+                        <div className="flex items-center space-x-2">
+              {showFlag && renderFlag(selectedCurrency)}
               {showName && (
                 <span className="hidden sm:inline text-gray-700 font-medium">
                   {selectedCurrency.code}
@@ -307,9 +351,7 @@ const CurrencySwitcher: React.FC<CurrencySwitcherProps> = ({
                           )}
                         >
                           <div className="flex items-center space-x-2 w-full">
-                            {showFlag && currency.flag && (
-                              <span className="text-lg">{currency.flag}</span>
-                            )}
+                            {showFlag && renderFlag(currency)}
                             <div className="flex-1 min-w-0">
                               <div className="text-sm font-medium text-gray-900 truncate">
                                 {currency.code}
