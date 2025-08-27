@@ -70,7 +70,7 @@ const Footer: React.FC = () => {
 
         {/* Footer Bottom */}
         <div className="border-t border-blue-800 mt-6 md:mt-10 pt-4 md:pt-6 text-center text-blue-300">
-          <p className="text-xs md:text-sm">© 2025 Coral Island Pattaya. All rights reserved.</p>
+          <p className="text-xs md:text-sm">{process.env.NEXT_PUBLIC_COPYRIGHT_TEXT}</p>
           <div className="mt-3 md:mt-4 text-xs md:text-sm">
             <span>Powered by <b>TNG Holidays</b></span>
           </div>
