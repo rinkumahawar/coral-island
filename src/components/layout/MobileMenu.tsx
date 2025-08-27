@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
-const MobileMenu: React.FC = () => {
+const MobileMenu: React.FC<{ attractions: Array<{url: string, name: string}> }> = ({ attractions }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAttractionsOpen, setIsAttractionsOpen] = useState(false);
 
@@ -86,34 +86,16 @@ const MobileMenu: React.FC = () => {
                 </button>
                 {isAttractionsOpen && (
                   <div className="ml-4 mt-2 space-y-2">
-                    <Link 
-                      href="/attractions/water-park" 
-                      className="block hover:text-blue-200 transition py-2 text-base"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Water Park
-                    </Link>
-                    <Link 
-                      href="/attractions/adventure-zone" 
-                      className="block hover:text-blue-200 transition py-2 text-base"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Adventure Zone
-                    </Link>
-                    <Link 
-                      href="/attractions/wildlife" 
-                      className="block hover:text-blue-200 transition py-2 text-base"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Wildlife
-                    </Link>
-                    <Link 
-                      href="/attractions/entertainment" 
-                      className="block hover:text-blue-200 transition py-2 text-base"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Entertainment
-                    </Link>
+                    {attractions.map((attraction, index) => (
+                      <Link 
+                        key={index}
+                        href={attraction.url} 
+                        className="block hover:text-blue-200 transition py-2 text-base"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {attraction.name}
+                      </Link>
+                    ))}                    
                   </div>
                 )}
               </div>

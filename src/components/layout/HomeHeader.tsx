@@ -100,7 +100,7 @@ const HomeHeader: React.FC = () => {
               showSearch={false}
               className="text-white"
             />
-            <MobileMenu />
+            <MobileMenu attractions={attractions} />
           </div>
         </nav>
       </div>
