@@ -38,4 +38,23 @@ export const formatDateYMD = (dateStr: string | Date): string => {
     const m = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     return `${y}-${m}-${day}`;
-}; 
+};
+
+export const formatDuration = (duration: string) => {
+    // Check if duration is just a number (minutes)
+    if (/^\d+$/.test(duration)) {
+      const minutes = parseInt(duration);
+      if (minutes < 60) {
+        return `${minutes}m`;
+      } else if (minutes % 60 === 0) {
+        return `${minutes / 60}h`;
+      } else {
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        return `${hours}h ${remainingMinutes}m`;
+      }
+    }
+    
+    // If it's already formatted (e.g., "2h 30m", "1.5h"), return as is
+    return duration;
+  };

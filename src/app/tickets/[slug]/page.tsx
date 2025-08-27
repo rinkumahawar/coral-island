@@ -14,6 +14,7 @@ import { Suspense } from 'react';
 import { CardSkeleton } from '@/components/common/SkeletonLoader';
 import Image from 'next/image';
 import FormatMoney from '@/components/common/FormatMoney';
+import { formatDuration } from '@/utils/timeUtils';
 
 // Enable ISR for better performance - revalidate every 5 minutes
 export const revalidate = 300; // 5 minutes
@@ -133,22 +134,6 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
   const basePrice = parseFloat(ticket.price);
   const salePrice = parseFloat(ticket.sale_price);
   const hasDiscount = salePrice < basePrice;
-
-  const formatDuration = (duration: string) => {
-    if (/^\d+$/.test(duration)) {
-      const minutes = parseInt(duration);
-      if (minutes < 60) {
-        return `${minutes}m`;
-      } else if (minutes % 60 === 0) {
-        return `${minutes / 60}h`;
-      } else {
-        const hours = Math.floor(minutes / 60);
-        const remainingMinutes = minutes % 60;
-        return `${hours}h ${remainingMinutes}m`;
-      }
-    }
-    return duration;
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 relative flex flex-col">
@@ -426,7 +411,7 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
                           {otherTicket.duration && (
                             <div className="flex items-center text-xs text-gray-600">
                               <FontAwesomeIcon icon={faClock} className="w-3 h-3 mr-1" />
-                              {otherTicket.duration}
+                              {formatDuration(otherTicket.duration)}
                             </div>
                           )}
                         </div>

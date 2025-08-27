@@ -12,6 +12,7 @@ import '../../styles/html-content.css';
 import { TicketData } from '@/lib/api/services/ticket';
 import FormatMoney from '@/components/common/FormatMoney';
 import Image from 'next/image';
+import { formatDuration } from '@/utils/timeUtils';
 
 
 
@@ -38,25 +39,6 @@ const TicketCard: React.FC<{ ticket: TicketData }> = ({ ticket }) => {
       return Math.round(((original - sale) / original) * 100);
     }
     return 0;
-  };
-
-  const formatDuration = (duration: string) => {
-    // Check if duration is just a number (minutes)
-    if (/^\d+$/.test(duration)) {
-      const minutes = parseInt(duration);
-      if (minutes < 60) {
-        return `${minutes}m`;
-      } else if (minutes % 60 === 0) {
-        return `${minutes / 60}h`;
-      } else {
-        const hours = Math.floor(minutes / 60);
-        const remainingMinutes = minutes % 60;
-        return `${hours}h ${remainingMinutes}m`;
-      }
-    }
-    
-    // If it's already formatted (e.g., "2h 30m", "1.5h"), return as is
-    return duration;
   };
 
   const renderStars = (rating: number, hasHalfStar?: boolean) => {

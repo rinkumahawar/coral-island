@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import MobileMenu from './MobileMenu';
@@ -8,6 +8,12 @@ import CurrencySwitcher from '../common/CurrencySwitcher';
 
 const HomeHeader: React.FC = () => {
   const [isAttractionsOpen, setIsAttractionsOpen] = useState(false);
+  const [attractions, setAttractions] = useState<Array<{url: string, name: string}>>([]);
+
+  useEffect(() => {
+    const attractionsData = JSON.parse(process.env.NEXT_PUBLIC_ATTRACTIONS || '[]');
+    setAttractions(attractionsData);
+  }, []);
 
   return (
     <header className="bg-blue-900 text-white relative">
@@ -37,6 +43,7 @@ const HomeHeader: React.FC = () => {
             <Link href="/tickets" className="hover:text-blue-200 transition">
               Tickets
             </Link>
+            {attractions.length > 0 && (
             <div 
               className="relative"
               onMouseEnter={() => setIsAttractionsOpen(true)}
@@ -50,21 +57,19 @@ const HomeHeader: React.FC = () => {
               </button>
               {isAttractionsOpen && (
                 <div className="absolute top-full left-0 mt-0 w-48 bg-white text-gray-800 rounded-md shadow-lg py-2 z-50">
-                  <Link href="/attractions/water-park" className="block px-4 py-2 hover:bg-blue-50 hover:text-blue-600 transition">
-                    Water Park
-                  </Link>
-                  <Link href="/attractions/adventure-zone" className="block px-4 py-2 hover:bg-blue-50 hover:text-blue-600 transition">
-                    Adventure Zone
-                  </Link>
-                  <Link href="/attractions/wildlife" className="block px-4 py-2 hover:bg-blue-50 hover:text-blue-600 transition">
-                    Wildlife
-                  </Link>
-                  <Link href="/attractions/entertainment" className="block px-4 py-2 hover:bg-blue-50 hover:text-blue-600 transition">
-                    Entertainment
-                  </Link>
+                  {attractions.map((attraction, index) => (
+                    <Link 
+                      key={index}
+                      href={attraction.url} 
+                      className="block px-4 py-2 hover:bg-blue-50 hover:text-blue-600 transition"
+                    >
+                      {attraction.name}
+                    </Link>
+                  ))}
                 </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
             <Link href="#about" className="hover:text-blue-200 transition">
               About Us
             </Link>
