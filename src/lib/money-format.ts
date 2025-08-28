@@ -93,11 +93,11 @@ export function formatMoney(
     
     // Ensure the correct currency symbol is always displayed
     if (showSymbol) {
-      // Replace any currency symbol with the specified symbol
-      formatted = formatted.replace(/[^\d\s,.-]/g, currentSymbol);
+      // Replace any currency code/symbol chunk with the specified symbol (once per chunk)
+      formatted = formatted.replace(/[^\d\s,.-]+/g, currentSymbol);
     } else {
-      // Remove currency symbol if not needed
-      formatted = formatted.replace(/[^\d\s,.-]/g, '');
+      // Remove any currency code/symbol chunks if not needed
+      formatted = formatted.replace(/[^\d\s,.-]+/g, '');
     }
 
     return formatted;
@@ -221,9 +221,9 @@ export function formatMoneyCompact(
     
     // Ensure the correct currency symbol is displayed
     if (showSymbol) {
-      formatted = formatted.replace(/[^\d\s,.-KMBT]/g, currentSymbol);
+      formatted = formatted.replace(/[^\d\s,.-KMBT]+/g, currentSymbol);
     } else {
-      formatted = formatted.replace(/[^\d\s,.-KMBT]/g, '');
+      formatted = formatted.replace(/[^\d\s,.-KMBT]+/g, '');
     }
 
     return formatted;
