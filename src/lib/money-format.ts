@@ -48,32 +48,30 @@ export function formatMoney(
     console.log('🔍 [formatMoney] Window exists, attempting to get global currency...');
     try {
       // Try to get currency from localStorage as fallback
-      const savedCurrency = localStorage.getItem('selectedCurrency');
-      const savedRates = localStorage.getItem('currencyRates');
+      const savedCurrencyCode = localStorage.getItem('currency_code');
+      const savedExchangeRate = localStorage.getItem('exchange_rate');
       
-      console.log('🔍 [formatMoney] localStorage values:', { savedCurrency, savedRates });
+      console.log('🔍 [formatMoney] localStorage values:', { savedCurrencyCode, savedExchangeRate });
       
-      if (savedCurrency) {
-        const parsedCurrency = JSON.parse(savedCurrency);
-        console.log('🔍 [formatMoney] Parsed currency:', parsedCurrency);
+      if (savedCurrencyCode) {
+        // Get currency info from our currency data
+        const currencyInfo = getCurrencyInfo(savedCurrencyCode);
+        console.log('🔍 [formatMoney] Currency info:', currencyInfo);
         
-        currentCurrency = parsedCurrency.code;
-        currentSymbol = parsedCurrency.symbol;
+        currentCurrency = currencyInfo.code;
+        currentSymbol = currencyInfo.symbol;
         
         // Set appropriate locale based on currency
-        currentLocale = getLocaleForCurrency(parsedCurrency.code);
+        currentLocale = getLocaleForCurrency(currencyInfo.code);
         
         console.log('🔍 [formatMoney] Updated currency info:', { currentCurrency, currentSymbol, currentLocale });
         
         // Convert amount if base currency is different from target currency
-        if (baseCurrency !== currentCurrency && savedRates) {
-          console.log('🔍 [formatMoney] Currency conversion needed:', { baseCurrency, currentCurrency, savedRates });
+        if (baseCurrency !== currentCurrency && savedExchangeRate) {
+          console.log('🔍 [formatMoney] Currency conversion needed:', { baseCurrency, currentCurrency, savedExchangeRate });
           
           try {
-            const parsedRates = JSON.parse(savedRates);
-            console.log('🔍 [formatMoney] Parsed exchange rates:', parsedRates);
-            
-            const exchangeRate = parseFloat(parsedRates.exchange_rate);
+            const exchangeRate = parseFloat(savedExchangeRate);
             console.log('🔍 [formatMoney] Exchange rate:', { exchangeRate, isNaN: isNaN(exchangeRate) });
             
             if (!isNaN(exchangeRate) && exchangeRate > 0) {
@@ -90,18 +88,18 @@ export function formatMoney(
               console.warn('⚠️ [formatMoney] Invalid exchange rate:', exchangeRate);
             }
           } catch (rateError) {
-            console.error('❌ [formatMoney] Failed to parse exchange rates:', rateError);
+            console.error('❌ [formatMoney] Failed to parse exchange rate:', rateError);
             console.warn('⚠️ [formatMoney] Using original amount due to rate parsing error');
           }
         } else {
           console.log('🔍 [formatMoney] No conversion needed:', { 
             baseCurrency, 
             currentCurrency, 
-            hasRates: !!savedRates 
+            hasRates: !!savedExchangeRate 
           });
         }
       } else {
-        console.log('🔍 [formatMoney] No saved currency found in localStorage');
+        console.log('🔍 [formatMoney] No saved currency code found in localStorage');
       }
     } catch (error) {
       console.error('❌ [formatMoney] Error getting global currency:', error);
@@ -242,12 +240,12 @@ export function formatMoneyCompact(
   
   if (useGlobalCurrency && typeof window !== 'undefined') {
     try {
-      const savedCurrency = localStorage.getItem('selectedCurrency');
-      if (savedCurrency) {
-        const parsedCurrency = JSON.parse(savedCurrency);
-        currentCurrency = parsedCurrency.code;
-        currentSymbol = parsedCurrency.symbol;
-        currentLocale = getLocaleForCurrency(parsedCurrency.code);
+      const savedCurrencyCode = localStorage.getItem('currency_code');
+      if (savedCurrencyCode) {
+        const currencyInfo = getCurrencyInfo(savedCurrencyCode);
+        currentCurrency = currencyInfo.code;
+        currentSymbol = currencyInfo.symbol;
+        currentLocale = getLocaleForCurrency(currencyInfo.code);
       }
     } catch (error) {
       console.warn('Failed to get global currency, using defaults');
@@ -299,13 +297,13 @@ function formatCompactNumber(num: number): string {
 export function getCurrentCurrency(): { code: string; symbol: string; name: string } {
   if (typeof window !== 'undefined') {
     try {
-      const savedCurrency = localStorage.getItem('selectedCurrency');
-      if (savedCurrency) {
-        const parsedCurrency = JSON.parse(savedCurrency);
+      const savedCurrencyCode = localStorage.getItem('currency_code');
+      if (savedCurrencyCode) {
+        const currencyInfo = getCurrencyInfo(savedCurrencyCode);
         return {
-          code: parsedCurrency.code,
-          symbol: parsedCurrency.symbol,
-          name: parsedCurrency.name
+          code: currencyInfo.code,
+          symbol: currencyInfo.symbol,
+          name: currencyInfo.name
         };
       }
     } catch (error) {
@@ -328,10 +326,9 @@ export function getCurrentCurrency(): { code: string; symbol: string; name: stri
 export function getCurrentExchangeRate(): number | null {
   if (typeof window !== 'undefined') {
     try {
-      const savedRates = localStorage.getItem('currencyRates');
-      if (savedRates) {
-        const parsedRates = JSON.parse(savedRates);
-        return parseFloat(parsedRates.exchange_rate);
+      const savedExchangeRate = localStorage.getItem('exchange_rate');
+      if (savedExchangeRate) {
+        return parseFloat(savedExchangeRate);
       }
     } catch (error) {
       console.warn('Failed to get current exchange rate from context');
@@ -378,7 +375,7 @@ export function formatMoneyForCurrency(
  * @param currencyCode - The currency code to look up
  * @returns Currency information object
  */
-function getCurrencyInfo(currencyCode: string): { code: string; symbol: string; name: string } {
+export function getCurrencyInfo(currencyCode: string): { code: string; symbol: string; name: string } {
   const currencyMap: { [key: string]: { code: string; symbol: string; name: string } } = {
     'THB': { code: 'THB', symbol: '฿', name: 'Thai Baht' },
     'USD': { code: 'USD', symbol: '$', name: 'US Dollar' },
@@ -443,41 +440,36 @@ export function debugCurrencyState(): void {
   
   try {
     // Check localStorage
-    const savedCurrency = localStorage.getItem('selectedCurrency');
-    const savedRates = localStorage.getItem('currencyRates');
+    const savedCurrencyCode = localStorage.getItem('currency_code');
+    const savedExchangeRate = localStorage.getItem('exchange_rate');
     
     console.log('🔍 [DEBUG] localStorage state:', {
-      selectedCurrency: savedCurrency,
-      currencyRates: savedRates
+      currency_code: savedCurrencyCode,
+      exchange_rate: savedExchangeRate
     });
     
-    // Parse and display currency info
-    if (savedCurrency) {
+    // Display currency info
+    if (savedCurrencyCode) {
       try {
-        const parsedCurrency = JSON.parse(savedCurrency);
-        console.log('🔍 [DEBUG] Parsed currency:', parsedCurrency);
+        const currencyInfo = getCurrencyInfo(savedCurrencyCode);
+        console.log('🔍 [DEBUG] Currency info:', currencyInfo);
       } catch (error) {
-        console.error('❌ [DEBUG] Failed to parse selectedCurrency:', error);
+        console.error('❌ [DEBUG] Failed to get currency info for code:', savedCurrencyCode, error);
       }
     }
     
-    // Parse and display exchange rates
-    if (savedRates) {
+    // Display exchange rate
+    if (savedExchangeRate) {
       try {
-        const parsedRates = JSON.parse(savedRates);
-        console.log('🔍 [DEBUG] Parsed exchange rates:', parsedRates);
-        
-        if (parsedRates.exchange_rate) {
-          const rate = parseFloat(parsedRates.exchange_rate);
-          console.log('🔍 [DEBUG] Exchange rate details:', {
-            raw: parsedRates.exchange_rate,
-            parsed: rate,
-            isValid: !isNaN(rate) && rate > 0,
-            type: typeof parsedRates.exchange_rate
-          });
-        }
+        const rate = parseFloat(savedExchangeRate);
+        console.log('🔍 [DEBUG] Exchange rate details:', {
+          raw: savedExchangeRate,
+          parsed: rate,
+          isValid: !isNaN(rate) && rate > 0,
+          type: typeof savedExchangeRate
+        });
       } catch (error) {
-        console.error('❌ [DEBUG] Failed to parse currencyRates:', error);
+        console.error('❌ [DEBUG] Failed to parse exchange rate:', error);
       }
     }
     

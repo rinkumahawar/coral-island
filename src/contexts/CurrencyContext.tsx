@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { getCurrencyInfo } from '@/lib/money-format';
 
 export interface Currency {
   code: string;
@@ -16,6 +17,16 @@ export interface CurrencyRates {
   exchange_rate: string;
   fetched_at: string;
 }
+
+
+export interface SelectedCurrency {
+  code: string;
+}
+
+export interface SelectedCurrencyExchangeRate {
+  exchange_rate: string;
+}
+
 
 interface CurrencyContextType {
   selectedCurrency: Currency;
@@ -61,36 +72,38 @@ export const CurrencyProvider: React.FC<CurrencyProviderProps> = ({
 
   // Load currency from localStorage on mount
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('selectedCurrency');
-    const savedRates = localStorage.getItem('currencyRates');
-    
-    if (savedCurrency) {
-      try {
-        setSelectedCurrency(JSON.parse(savedCurrency));
-      } catch (e) {
-        console.warn('Failed to parse saved currency from localStorage');
-      }
+    const savedCurrencyCode = localStorage.getItem('currency_code');
+    const savedExchangeRate = localStorage.getItem('exchange_rate');
+
+    if (savedCurrencyCode) {
+      const info = getCurrencyInfo(savedCurrencyCode);
+      setSelectedCurrency({ code: info.code, name: info.name, symbol: info.symbol });
     }
-    
-    if (savedRates) {
-      try {
-        setCurrencyRates(JSON.parse(savedRates));
-      } catch (e) {
-        console.warn('Failed to parse saved currency rates from localStorage');
+
+    if (savedExchangeRate) {
+      const rate = parseFloat(savedExchangeRate);
+      if (!isNaN(rate)) {
+        setCurrencyRates({
+          id: 1,
+          base_currency: 'THB',
+          target_currency: savedCurrencyCode || selectedCurrency.code,
+          exchange_rate: savedExchangeRate,
+          fetched_at: new Date().toISOString()
+        });
       }
     }
   }, []);
 
-  // Save currency and rates to localStorage whenever they change
+  // Save only single values to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem('selectedCurrency', JSON.stringify(selectedCurrency));
-  }, [selectedCurrency]);
+    localStorage.setItem('currency_code', selectedCurrency.code);
+  }, [selectedCurrency.code]);
 
   useEffect(() => {
-    if (currencyRates) {
-      localStorage.setItem('currencyRates', JSON.stringify(currencyRates));
+    if (currencyRates?.exchange_rate) {
+      localStorage.setItem('exchange_rate', currencyRates.exchange_rate);
     }
-  }, [currencyRates]);
+  }, [currencyRates?.exchange_rate]);
 
   const value: CurrencyContextType = {
     selectedCurrency,
