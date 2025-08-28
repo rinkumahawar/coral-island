@@ -22,8 +22,6 @@ export function formatMoney(
     baseCurrency?: string; // The currency the amount is currently in
   } = {}
 ): string {
-  console.log('🔍 [formatMoney] Starting with:', { amount, options });
-  
   const {
     showSymbol = true,
     showDecimals = true,
@@ -34,29 +32,21 @@ export function formatMoney(
     baseCurrency = 'THB' // Default base currency (THB)
   } = options;
   
-  console.log('🔍 [formatMoney] Parsed options:', { showSymbol, showDecimals, locale, currency, symbol, useGlobalCurrency, baseCurrency });
-  
   // Get current currency from global context if available
   let currentCurrency = currency || 'THB';
   let currentSymbol = symbol || '฿';
   let currentLocale = locale || 'th-TH';
   let convertedAmount = amount;
   
-  console.log('🔍 [formatMoney] Initial values:', { currentCurrency, currentSymbol, currentLocale, convertedAmount });
-  
   if (useGlobalCurrency && typeof window !== 'undefined') {
-    console.log('🔍 [formatMoney] Window exists, attempting to get global currency...');
     try {
       // Try to get currency from localStorage as fallback
       const savedCurrencyCode = localStorage.getItem('currency_code');
       const savedExchangeRate = localStorage.getItem('exchange_rate');
       
-      console.log('🔍 [formatMoney] localStorage values:', { savedCurrencyCode, savedExchangeRate });
-      
       if (savedCurrencyCode) {
         // Get currency info from our currency data
         const currencyInfo = getCurrencyInfo(savedCurrencyCode);
-        console.log('🔍 [formatMoney] Currency info:', currencyInfo);
         
         currentCurrency = currencyInfo.code;
         currentSymbol = currencyInfo.symbol;
@@ -64,58 +54,32 @@ export function formatMoney(
         // Set appropriate locale based on currency
         currentLocale = getLocaleForCurrency(currencyInfo.code);
         
-        console.log('🔍 [formatMoney] Updated currency info:', { currentCurrency, currentSymbol, currentLocale });
-        
         // Convert amount if base currency is different from target currency
         if (baseCurrency !== currentCurrency && savedExchangeRate) {
-          console.log('🔍 [formatMoney] Currency conversion needed:', { baseCurrency, currentCurrency, savedExchangeRate });
-          
           try {
             const exchangeRate = parseFloat(savedExchangeRate);
-            console.log('🔍 [formatMoney] Exchange rate:', { exchangeRate, isNaN: isNaN(exchangeRate) });
             
             if (!isNaN(exchangeRate) && exchangeRate > 0) {
               // Convert from base currency to target currency
-              const originalAmount = convertedAmount;
               convertedAmount = amount * exchangeRate;
-              console.log('🔍 [formatMoney] Amount converted:', { 
-                originalAmount, 
-                exchangeRate, 
-                convertedAmount,
-                calculation: `${originalAmount} * ${exchangeRate} = ${convertedAmount}`
-              });
             } else {
-              console.warn('⚠️ [formatMoney] Invalid exchange rate:', exchangeRate);
+              // invalid rate; keep original
             }
           } catch (rateError) {
-            console.error('❌ [formatMoney] Failed to parse exchange rate:', rateError);
-            console.warn('⚠️ [formatMoney] Using original amount due to rate parsing error');
+            // ignore parsing errors and use original amount
           }
         } else {
-          console.log('🔍 [formatMoney] No conversion needed:', { 
-            baseCurrency, 
-            currentCurrency, 
-            hasRates: !!savedExchangeRate 
-          });
+          // no conversion needed
         }
       } else {
-        console.log('🔍 [formatMoney] No saved currency code found in localStorage');
+        // no saved currency code
       }
     } catch (error) {
-      console.error('❌ [formatMoney] Error getting global currency:', error);
-      console.warn('⚠️ [formatMoney] Using defaults due to error');
+      // ignore and use defaults
     }
   } else {
-    console.log('🔍 [formatMoney] Skipping global currency (useGlobalCurrency:', useGlobalCurrency, 'window exists:', typeof window !== 'undefined', ')');
+    // not using global currency or window missing
   }
-  
-  console.log('🔍 [formatMoney] Final values before formatting:', { 
-    currentCurrency, 
-    currentSymbol, 
-    currentLocale, 
-    convertedAmount,
-    originalAmount: amount 
-  });
   
   try {
     const formatter = new Intl.NumberFormat(currentLocale, {
@@ -126,29 +90,21 @@ export function formatMoney(
     });
 
     let formatted = formatter.format(convertedAmount);
-    console.log('🔍 [formatMoney] Intl formatter result:', formatted);
     
     // Ensure the correct currency symbol is always displayed
     if (showSymbol) {
       // Replace any currency symbol with the specified symbol
-      const beforeReplace = formatted;
       formatted = formatted.replace(/[^\d\s,.-]/g, currentSymbol);
-      console.log('🔍 [formatMoney] Symbol replacement:', { beforeReplace, afterReplace: formatted, currentSymbol });
     } else {
       // Remove currency symbol if not needed
-      const beforeReplace = formatted;
       formatted = formatted.replace(/[^\d\s,.-]/g, '');
-      console.log('🔍 [formatMoney] Symbol removal:', { beforeReplace, afterReplace: formatted });
     }
 
-    console.log('🔍 [formatMoney] Final formatted result:', formatted);
     return formatted;
   } catch (error) {
-    console.error('❌ [formatMoney] Intl formatter failed:', error);
     // Fallback formatting if Intl is not supported
     const fallback = amount.toFixed(showDecimals ? 2 : 0);
     const result = showSymbol ? `${currentSymbol}${fallback}` : fallback;
-    console.log('🔍 [formatMoney] Using fallback formatting:', result);
     return result;
   }
 }
@@ -248,7 +204,7 @@ export function formatMoneyCompact(
         currentLocale = getLocaleForCurrency(currencyInfo.code);
       }
     } catch (error) {
-      console.warn('Failed to get global currency, using defaults');
+      // ignore errors and use defaults
     }
   }
 
@@ -307,7 +263,7 @@ export function getCurrentCurrency(): { code: string; symbol: string; name: stri
         };
       }
     } catch (error) {
-      console.warn('Failed to get current currency from context');
+      // ignore errors
     }
   }
   
@@ -331,7 +287,7 @@ export function getCurrentExchangeRate(): number | null {
         return parseFloat(savedExchangeRate);
       }
     } catch (error) {
-      console.warn('Failed to get current exchange rate from context');
+      // ignore errors
     }
   }
   
@@ -431,64 +387,7 @@ export function getCurrencyInfo(currencyCode: string): { code: string; symbol: s
  * Call this function in the browser console to see the current state
  */
 export function debugCurrencyState(): void {
-  console.log('🔍 [DEBUG] === CURRENCY SYSTEM DEBUG ===');
-  
-  if (typeof window === 'undefined') {
-    console.log('🔍 [DEBUG] Running on server-side, no localStorage access');
-    return;
-  }
-  
-  try {
-    // Check localStorage
-    const savedCurrencyCode = localStorage.getItem('currency_code');
-    const savedExchangeRate = localStorage.getItem('exchange_rate');
-    
-    console.log('🔍 [DEBUG] localStorage state:', {
-      currency_code: savedCurrencyCode,
-      exchange_rate: savedExchangeRate
-    });
-    
-    // Display currency info
-    if (savedCurrencyCode) {
-      try {
-        const currencyInfo = getCurrencyInfo(savedCurrencyCode);
-        console.log('🔍 [DEBUG] Currency info:', currencyInfo);
-      } catch (error) {
-        console.error('❌ [DEBUG] Failed to get currency info for code:', savedCurrencyCode, error);
-      }
-    }
-    
-    // Display exchange rate
-    if (savedExchangeRate) {
-      try {
-        const rate = parseFloat(savedExchangeRate);
-        console.log('🔍 [DEBUG] Exchange rate details:', {
-          raw: savedExchangeRate,
-          parsed: rate,
-          isValid: !isNaN(rate) && rate > 0,
-          type: typeof savedExchangeRate
-        });
-      } catch (error) {
-        console.error('❌ [DEBUG] Failed to parse exchange rate:', error);
-      }
-    }
-    
-    // Test current functions
-    console.log('🔍 [DEBUG] Testing utility functions:');
-    console.log('🔍 [DEBUG] getCurrentCurrency():', getCurrentCurrency());
-    console.log('🔍 [DEBUG] getCurrentExchangeRate():', getCurrentExchangeRate());
-    
-    // Test formatting with sample amounts
-    const testAmount = 1000;
-    console.log('🔍 [DEBUG] Test formatting with amount:', testAmount);
-    console.log('🔍 [DEBUG] formatMoney(1000):', formatMoney(testAmount));
-    console.log('🔍 [DEBUG] formatMoney(1000, { useGlobalCurrency: false }):', formatMoney(testAmount, { useGlobalCurrency: false }));
-    
-  } catch (error) {
-    console.error('❌ [DEBUG] Error during debug:', error);
-  }
-  
-  console.log('🔍 [DEBUG] === END DEBUG ===');
+  // No-op in production
 }
 
 // The money formatting system supports any currency while maintaining THB as default

@@ -202,7 +202,6 @@ const CurrencySwitcher: React.FC<CurrencySwitcherProps> = ({
       onCurrencyChange?.(currency, currencyRates);
       window.location.reload();
     } catch (err: any) {
-      console.error('Failed to fetch currency rates:', err);
       setError(err.message || 'Failed to fetch currency rates');
       setSelectedCurrency(currency);
       setIsOpen(false);

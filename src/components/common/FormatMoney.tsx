@@ -26,9 +26,8 @@ const FormatMoney: React.FC<FormatMoneyProps> = ({
 
     const handleCurrencyChange = () => {
       try {
-        const currencyCode = localStorage.getItem('currency_code');
-        const exchangeRate = localStorage.getItem('exchange_rate');
-        console.log('🔁 [FormatMoney] currency change detected, re-rendering...', { currencyCode, exchangeRate });
+        localStorage.getItem('currency_code');
+        localStorage.getItem('exchange_rate');
       } catch {}
       setRenderKey((k) => k + 1);
     };
