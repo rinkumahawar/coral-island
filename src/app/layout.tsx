@@ -116,44 +116,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
       >
-        {/* Global Organization Schema */}
-        <Script
-          id="global-organization-schema"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "TouristInformationCenter",
-              "name": process.env.NEXT_PUBLIC_PAGE_NAME,
-              "description":  process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
-              "url": process.env.NEXT_PUBLIC_SITE_URL,
-              "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH}`,
-              "image": process.env.NEXT_PUBLIC_LOGO_PATH,
-              "address": {
-                "@type": "PostalAddress",
-                "addressLocality": process.env.NEXT_PUBLIC_PAGE_ADDRESS_LOCALITY,
-                "addressCountry": process.env.NEXT_PUBLIC_PAGE_ADDRESS_COUNTRY,
-                "addressRegion": process.env.NEXT_PUBLIC_PAGE_ADDRESS_REGION
-              },
-              "telephone": process.env.NEXT_PUBLIC_PHONE_NUMBER,
-              "email": process.env.NEXT_PUBLIC_EMAIL,
-              "openingHours": "Mo-Su 08:00-18:00",
-              "priceRange": "฿฿",
-              "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": "4.9",
-                "reviewCount": "10000"
-              },
-              "sameAs": [
-                process.env.NEXT_PUBLIC_FACEBOOK_URL,
-                process.env.NEXT_PUBLIC_TWITTER_URL,
-                process.env.NEXT_PUBLIC_INSTAGRAM_URL,
-                process.env.NEXT_PUBLIC_YOUTUBE_URL
-              ].filter(Boolean)
-            })
-          }}
-        />
-
         <FontAwesomeProvider>
           <BookingProvider>
             <CurrencyProvider>
