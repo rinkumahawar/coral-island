@@ -21,16 +21,12 @@ const geistMono = Geist_Mono({
 
 // Metadata configuration for the entire app
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://coralislandtour.com'),
-  title: {
-    default: 'Coral Island Pattaya - Adventure Tours & Events',
-    template: '%s | Coral Island Pattaya'
-  },
-  description: 'Discover the hidden treasures of Thailand\'s most beautiful island with our Coral Island Adventure Event. Book your event today!',
-  keywords: ['Coral Island', 'Pattaya', 'Thailand', 'Adventure', 'Beach Activities', 'Island Tours'],
-  authors: [{ name: 'Coral Island Pattaya' }],
-  creator: 'Coral Island Pattaya',
-  publisher: 'Coral Island Pattaya',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  description: process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
+  keywords: process.env.NEXT_PUBLIC_PAGE_KEYWORDS ? process.env.NEXT_PUBLIC_PAGE_KEYWORDS : [],
+  authors: [{ name: process.env.NEXT_PUBLIC_PAGE_NAME }],
+  creator: process.env.NEXT_PUBLIC_PAGE_NAME,
+  publisher: process.env.NEXT_PUBLIC_PAGE_NAME,
   formatDetection: {
     email: false,
     address: false,
@@ -39,26 +35,33 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://coralislandtour.com',
-    siteName: 'Coral Island Pattaya',
-    title: 'Coral Island Pattaya - Adventure Tours & Events',
-    description: 'Discover the hidden treasures of Thailand\'s most beautiful island with our Coral Island Adventure Event. Book your event today!',
+    url: process.env.NEXT_PUBLIC_SITE_URL,
+    siteName: process.env.NEXT_PUBLIC_PAGE_NAME,
+    title: process.env.NEXT_PUBLIC_PAGE_NAME,
+    description: process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
     images: [
       {
-        url: process.env.NEXT_PUBLIC_LOGO_PATH || '/images/coralisland/logo.jpg',
+        url: process.env.NEXT_PUBLIC_LOGO_PATH || 'http://localhost:3000/images/coralisland/logo.jpg',
         width: 1200,
         height: 630,
-        alt: 'Coral Island Pattaya',
+        alt: process.env.NEXT_PUBLIC_PAGE_NAME,
       }
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    site: process.env.NEXT_PUBLIC_TWITTER_URL || '@coralislandpattaya',
-    creator: '@coralislandpattaya',
-    title: 'Coral Island Pattaya - Adventure Tours & Events',
-    description: 'Discover the hidden treasures of Thailand\'s most beautiful island with our Coral Island Adventure Event. Book your event today!',
-    images: [process.env.NEXT_PUBLIC_LOGO_PATH || '/images/coralisland/logo.jpg'],
+    site: process.env.NEXT_PUBLIC_TWITTER_URL,
+    creator: process.env.NEXT_PUBLIC_TWITTER_URL,
+    title: process.env.NEXT_PUBLIC_PAGE_NAME,
+    description: process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
+    images: [
+      {
+        url: process.env.NEXT_PUBLIC_LOGO_PATH || 'http://localhost:3000/images/coralisland/logo.jpg',
+        width: 1200,
+        height: 630,
+        alt: process.env.NEXT_PUBLIC_PAGE_NAME,
+      }
+    ],
   },
   robots: {
     index: true,
@@ -105,7 +108,7 @@ export default function RootLayout({
         <meta name="msapplication-TileColor" content="#1e40af" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Coral Island Pattaya" />
+        <meta name="apple-mobile-web-app-title" content={process.env.NEXT_PUBLIC_PAGE_NAME} />  
         
         {/* Canonical Link */}
         <link rel="canonical" href={process.env.NEXT_PUBLIC_SITE_URL} />
@@ -121,8 +124,8 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "TouristInformationCenter",
-              "name": "Coral Island Pattaya",
-              "description": "Discover the hidden treasures of Thailand's most beautiful island with our Coral Island Adventure Event. Book your event today!",
+              "name": process.env.NEXT_PUBLIC_PAGE_NAME,
+              "description":  process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
               "url": process.env.NEXT_PUBLIC_SITE_URL,
               "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH}`,
               "image": process.env.NEXT_PUBLIC_LOGO_PATH,

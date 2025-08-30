@@ -2,6 +2,46 @@
 'use client';
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Metadata } from 'next';
+
+export async function generateMetadata(): Promise<Metadata> { 
+  try {
+    return {
+      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+      title: 'Book Confrimation' + (process.env.NEXT_PUBLIC_PAGE_NAME),
+      description: 'Your booking has been confirmed! View your booking details, download your voucher, and get ready for your adventure.',
+      openGraph: {
+        title: 'Book ' + (process.env.NEXT_PUBLIC_PAGE_NAME) + ' - Confirmation',
+        description: process.env.NEXT_PUBLIC_PAGE_DESCRIPTION || 'Your booking has been confirmed! View your booking details, download your voucher, and get ready for your adventure.',
+        type: 'website',
+        images: process.env.NEXT_PUBLIC_PAGE_IMAGE ? [
+          {
+            url: process.env.NEXT_PUBLIC_PAGE_IMAGE,
+            width: 1200,
+            height: 630,
+            alt: 'Booking Confirmation',
+          }
+        ] : [],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: 'Book ' + (process.env.NEXT_PUBLIC_PAGE_NAME) + ' - Confirmation',
+        description: 'Your booking has been confirmed! View your booking details, download your voucher, and get ready for your adventure.',
+        images: process.env.NEXT_PUBLIC_PAGE_IMAGE ? [process.env.NEXT_PUBLIC_PAGE_IMAGE] : [],
+      },
+      alternates: {
+        canonical: '/booking-confirmation',
+      },
+    };
+  } catch (error) {
+    console.error('Error generating metadata:', error);
+    // Fallback metadata for build failures
+    return {
+      title: 'Book ' + (process.env.NEXT_PUBLIC_PAGE_NAME) + ' - Confirmation',
+      description: 'Your booking has been confirmed! View your booking details, download your voucher, and get ready for your adventure.',
+    };
+  }
+}
 
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -13,7 +53,6 @@ import BookingSupportSection from '@/components/booking/BookingSupportSection';
 import ImportantInformation from '@/components/booking/ImportantInformation';
 import { BookingService } from '@/lib/api/services/booking';
 import { TicketService, TicketData, EventData } from '@/lib/api/services/ticket';
-import FormatMoney from '@/components/common/FormatMoney';
 
 const BookingConfirmationContent: React.FC = () => {
     const [showPrintView, setShowPrintView] = useState(false);
@@ -24,7 +63,7 @@ const BookingConfirmationContent: React.FC = () => {
     const [bookingDetails, setBookingDetails] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
+    
     // State for voucher URL
     const [voucherUrl, setVoucherUrl] = useState<string | undefined>(undefined);
 
@@ -233,11 +272,11 @@ const BookingConfirmationContent: React.FC = () => {
                             ]}
                             contactInfo={{
                                 support: {
-                                    phone: "+66 38 123 4567",
-                                    email: "support@coralislandtour.com"
+                                    phone: process.env.NEXT_PUBLIC_COMPANY_PHONE || "",
+                                    email: process.env.NEXT_PUBLIC_COMPANY_EMAIL || ""
                                 },
                                 emergency: {
-                                    phone: "+66 81 234 5678",
+                                    phone: process.env.NEXT_PUBLIC_COMPANY_PHONE || "",
                                     available: "24/7"
                                 }
                             }}

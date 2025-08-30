@@ -11,7 +11,7 @@ export interface EventData {
     title: string;
     content: string;
   }>;
-  seo_data: MetaData;
+  meta_data: MetaData;
   extra_price: Array<object> | null;
 }
 
@@ -64,7 +64,7 @@ export interface TicketData {
     content: string;
   }>;
   event: EventData | null;
-  seo_data: MetaData;
+  meta_data: MetaData;
 }
 
 export interface TicketResponse {

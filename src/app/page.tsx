@@ -33,8 +33,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 
     // Use API data for metadata
-    const title = metaData?.seo_title || eventData?.title || undefined;
-    const description = metaData?.seo_desc || eventData?.description || undefined;
+    const title = metaData?.seo_title || eventData?.title;
+    const description = metaData?.seo_desc || eventData?.description;
     const image = metaData?.seo_image || eventData?.banner_image?.file_path || undefined;
 
     return {
@@ -80,8 +80,8 @@ export async function generateMetadata(): Promise<Metadata> {
     console.error('Error generating metadata:', error);
     // Fallback metadata for build failures
     return {
-      title: 'Coral Island Adventure Event - Pattaya, Thailand',
-      description: 'Discover the hidden treasures of Thailand\'s most beautiful island with our Coral Island Adventure Event. Book your event today!',
+      title: process.env.NEXT_PUBLIC_PAGE_NAME,
+      description: process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
     };
   }
 }
@@ -93,7 +93,7 @@ async function getEventData() {
     return {
       eventData: data.event,
       ticketData: data.tickets,
-      seoData: data.seo_data,
+      metaData: data.meta_data,
       reviews: data.reviews,
       error: null
     };
@@ -102,7 +102,7 @@ async function getEventData() {
     return {
       eventData: null,
       ticketData: [],
-      seoData: null,
+      metaData: null,
       reviews: [],
       error: 'Failed to fetch event data'
     };
@@ -112,7 +112,7 @@ async function getEventData() {
 
 // Main page component - now server-side rendered
 export default async function HomePage() {
-  const { eventData, ticketData, error, reviews, seoData } = await getEventData();
+  const { eventData, ticketData, error, reviews, metaData } = await getEventData();
 
   if (error) {
     return (
@@ -135,9 +135,9 @@ export default async function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Event",
-            "name": seoData?.seo_title || eventData?.title,
-            "description": seoData?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
-            "image": seoData?.seo_image || undefined,
+            "name": metaData?.seo_title || eventData?.title,
+            "description": metaData?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
+            "image": metaData?.seo_image || undefined,
             "startDate": new Date().toISOString().split('T')[0] + "T08:00:00",
             "endDate": new Date().toISOString().split('T')[0] + "T16:00:00",
             "location": {
@@ -207,7 +207,7 @@ export default async function HomePage() {
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Product",
-              "name": seoData?.seo_title || eventData?.title,
+              "name": metaData?.seo_title || eventData?.title,
               "aggregateRating": {
                 "@type": "AggregateRating",
                 "ratingValue": eventData?.review_stats?.score_total || "4.9",
@@ -243,11 +243,11 @@ export default async function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "TouristInformationCenter",
-            "name": seoData?.seo_title || eventData?.title,
-            "description": seoData?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
+            "name": metaData?.seo_title || eventData?.title,
+            "description": metaData?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
             "url": process.env.NEXT_PUBLIC_SITE_URL,
             "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH}`,
-            "image": seoData?.seo_image || undefined,
+            "image": metaData?.seo_image || undefined,
             "address": {
               "@type": "PostalAddress",
               "addressLocality": process.env.NEXT_PUBLIC_PAGE_ADDRESS_LOCALITY,

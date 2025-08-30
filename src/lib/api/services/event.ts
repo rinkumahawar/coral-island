@@ -131,7 +131,7 @@ export interface EventData {
 export interface EventResponse {
   event: EventData;
   tickets: TicketData[];
-  seo_data: MetaData;
+  meta_data: MetaData;
   reviews: ReviewData[];
 }
 

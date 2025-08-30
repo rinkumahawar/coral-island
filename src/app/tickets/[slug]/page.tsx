@@ -35,28 +35,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
     
     // Use API data for metadata
-    const title = ticket.seo_data?.seo_title || ticket.title || undefined;
-    const description = ticket.seo_data?.seo_desc || ticket.content || undefined;
-    const image = ticket.seo_data?.seo_image || ticket.image?.file_path || undefined;
+    const title = ticket.meta_data?.seo_title || ticket.title;
+    const description = ticket.meta_data?.seo_desc || ticket.content;
+    const image = ticket.meta_data?.seo_image || ticket.image?.file_path;
     
     return {
       metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
       title: title,
       description: description,
-      keywords: [
-        'Coral Island',
-        'Pattaya', 
-        'Thailand',
-        'Event Ticket',
-        'Adventure',
-        'Beach Activities',
-        'Island Event',
-        'Event Booking',
-        'Travel',
-        'Vacation',
-        'Ticket Booking',
-        ticket.title
-      ],
+      keywords: process.env.NEXT_PUBLIC_PAGE_KEYWORDS ? process.env.NEXT_PUBLIC_PAGE_KEYWORDS : [],
       openGraph: {
         title: title,
         description: description,
@@ -84,8 +71,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     console.error('Error generating metadata:', error);
     // Fallback metadata for build failures
     return {
-      title: 'Coral Island Event Ticket - Pattaya, Thailand',
-      description: 'Book your ticket for the Coral Island Adventure Event. Experience the best of Thailand\'s beautiful island.',
+      title: process.env.NEXT_PUBLIC_PAGE_NAME + " - Tickets",
+      description: process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
     };
   }
 }
@@ -145,9 +132,9 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Product",
-            "name": ticket.seo_data?.seo_title || ticket.title,
-            "description": ticket.seo_data?.seo_desc,
-            "image": ticket.image?.file_path,
+            "name": ticket.meta_data?.seo_title || ticket.title,
+            "description": ticket.meta_data?.seo_desc,
+            "image": ticket.meta_data?.seo_image || ticket.image?.file_path,
             "offers": {
               "@type": "Offer",
               "price": ticket.sale_price || ticket.price,
@@ -231,11 +218,11 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "TouristInformationCenter",
-            "name": ticket.seo_data?.seo_title || ticket.title,
-            "description": ticket.seo_data?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
+            "name": ticket.meta_data?.seo_title || ticket.title,
+            "description": ticket.meta_data?.seo_desc || process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
             "url": process.env.NEXT_PUBLIC_SITE_URL,
             "logo": `${process.env.NEXT_PUBLIC_SITE_URL}${process.env.NEXT_PUBLIC_LOGO_PATH}`,
-            "image": ticket.seo_data?.seo_image || ticket.image?.file_path || undefined,
+            "image": ticket.meta_data?.seo_image || ticket.image?.file_path || undefined,
             "address": {
               "@type": "PostalAddress",
               "addressLocality": process.env.NEXT_PUBLIC_PAGE_ADDRESS_LOCALITY,
