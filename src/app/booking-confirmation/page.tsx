@@ -1,47 +1,7 @@
-// The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 'use client';
+
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Metadata } from 'next';
-
-export async function generateMetadata(): Promise<Metadata> { 
-  try {
-    return {
-      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
-      title: 'Book Confrimation' + (process.env.NEXT_PUBLIC_PAGE_NAME),
-      description: 'Your booking has been confirmed! View your booking details, download your voucher, and get ready for your adventure.',
-      openGraph: {
-        title: 'Book ' + (process.env.NEXT_PUBLIC_PAGE_NAME) + ' - Confirmation',
-        description: process.env.NEXT_PUBLIC_PAGE_DESCRIPTION || 'Your booking has been confirmed! View your booking details, download your voucher, and get ready for your adventure.',
-        type: 'website',
-        images: process.env.NEXT_PUBLIC_PAGE_IMAGE ? [
-          {
-            url: process.env.NEXT_PUBLIC_PAGE_IMAGE,
-            width: 1200,
-            height: 630,
-            alt: 'Booking Confirmation',
-          }
-        ] : [],
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: 'Book ' + (process.env.NEXT_PUBLIC_PAGE_NAME) + ' - Confirmation',
-        description: 'Your booking has been confirmed! View your booking details, download your voucher, and get ready for your adventure.',
-        images: process.env.NEXT_PUBLIC_PAGE_IMAGE ? [process.env.NEXT_PUBLIC_PAGE_IMAGE] : [],
-      },
-      alternates: {
-        canonical: '/booking-confirmation',
-      },
-    };
-  } catch (error) {
-    console.error('Error generating metadata:', error);
-    // Fallback metadata for build failures
-    return {
-      title: 'Book ' + (process.env.NEXT_PUBLIC_PAGE_NAME) + ' - Confirmation',
-      description: 'Your booking has been confirmed! View your booking details, download your voucher, and get ready for your adventure.',
-    };
-  }
-}
 
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
