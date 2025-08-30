@@ -82,12 +82,21 @@ export interface TicketResponse {
       return response.data.data;
     }
 
-    public static async getTicketDetails(slug: string): Promise<TicketData> {
-      const response = await HttpClient.post<ApiResponse<TicketData>>(
-        API_CONFIG.endpoints.ticketDetails.replace(':slug', slug),
-        { slug },
-      );
-      return response.data.data;
+    public static async getTicketDetails(slug: string): Promise<TicketData | null> {
+      try {
+        const response = await HttpClient.post<ApiResponse<TicketData>>(
+          API_CONFIG.endpoints.ticketDetails.replace(':slug', slug),
+          { type: process.env.NEXT_PUBLIC_PAGE_SLUG },
+        );
+        return response.data.data;
+      } catch (error: any) {
+        // If the API returns a 404 or similar error, return null to indicate ticket not found
+        if (error.status === 404 || error.code === 404) {
+          return null;
+        }
+        // Re-throw other errors to be handled by the calling code
+        throw error;
+      }
     }
   }
   
