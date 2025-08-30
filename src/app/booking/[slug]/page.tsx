@@ -24,64 +24,8 @@ import Footer from '@/components/layout/Footer';
 import { EventData, TicketData, TicketService } from '@/lib/api/services/ticket';
 import { ApiError } from '@/lib/api/types';
 import FormatMoney from '@/components/common/FormatMoney';
-import { Metadata } from 'next';
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> { 
-  try {
-    const { slug } = await params;
-    
-    // Fetch ticket data server-side for SEO
-    const ticket = await TicketService.getTicketDetails(slug);
-    
-    if (!ticket) {
-      return {
-        title: 'Ticket Not Found',
-        description: 'The requested ticket could not be found.',
-      };
-    }
-    
-    // Use API data for metadata
-    const title = ticket.meta_data?.seo_title || ticket.title;
-    const description = ticket.meta_data?.seo_desc || ticket.content;
-    const image = ticket.meta_data?.seo_image || ticket.image?.file_path;
-    
-    return {
-      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
-      title: "Book " + title,
-      description: description,
-      keywords: process.env.NEXT_PUBLIC_PAGE_KEYWORDS ? process.env.NEXT_PUBLIC_PAGE_KEYWORDS : [],
-      openGraph: {
-        title: title,
-        description: description,
-        type: 'website',
-        images: image ? [
-          {
-            url: image,
-            width: 1200,
-            height: 630,
-            alt: title,
-          }
-        ] : [],
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: title,
-        description: description,
-        images: image ? [image] : [],
-      },
-      alternates: {
-        canonical: `/booking/${ticket.slug}`,
-      },
-    };
-  } catch (error) {
-    console.error('Error generating metadata:', error);
-    // Fallback metadata for build failures
-    return {
-      title: 'Book' + process.env.NEXT_PUBLIC_PAGE_NAME,
-      description: process.env.NEXT_PUBLIC_PAGE_DESCRIPTION,
-    };
-  }
-}
+
 
 interface TimeSlot {
   id: number;
