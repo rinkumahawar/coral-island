@@ -34,6 +34,10 @@ export interface PaymentRequest {
   customer_id: number;
   description?: string;
   return_uri?: string;
+  // Currency conversion fields
+  converted_amount?: number;
+  exchange_rate?: number;
+  payment_gateway?: string;
 }
 
 export interface PaymentResponse {
@@ -71,7 +75,15 @@ export interface PaymentDetails {
 
 export const createImmediatePayment = async (paymentData: PaymentRequest): Promise<PaymentResponse> => {
   try {
-    const { token, amount, currency, description = 'Payment for tour booking' } = paymentData;
+    const { 
+      token, 
+      amount, 
+      currency, 
+      description = 'Payment for tour booking',
+      converted_amount,
+      exchange_rate,
+      payment_gateway
+    } = paymentData;
 
     // Validate inputs
     if (!token || !amount || !currency) {
@@ -99,7 +111,11 @@ export const createImmediatePayment = async (paymentData: PaymentRequest): Promi
         token,
         amount,
         currency,
-        description
+        description,
+        // Add currency conversion data
+        converted_amount,
+        exchange_rate,
+        payment_gateway
       }
     );
 
@@ -116,7 +132,18 @@ export const createImmediatePayment = async (paymentData: PaymentRequest): Promi
 
 export const createPaymentWith3DS = async (paymentData: PaymentRequest & { return_uri?: string }): Promise<PaymentResponse> => {
   try {
-    const { token, amount, currency, description = 'Payment for tour booking', return_uri, booking_code, customer_id } = paymentData;
+    const { 
+      token, 
+      amount, 
+      currency, 
+      description = 'Payment for tour booking', 
+      return_uri, 
+      booking_code, 
+      customer_id,
+      converted_amount,
+      exchange_rate,
+      payment_gateway
+    } = paymentData;
 
     // Validate inputs
     if (!token || !amount || !currency) {
@@ -147,7 +174,11 @@ export const createPaymentWith3DS = async (paymentData: PaymentRequest & { retur
         description,
         return_uri,
         booking_code,
-        customer_id
+        customer_id,
+        // Add currency conversion data
+        converted_amount,
+        exchange_rate,
+        payment_gateway
       }
     );
 

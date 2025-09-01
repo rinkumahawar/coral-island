@@ -35,6 +35,11 @@ const ChargeContent = () => {
         const bookingCode = searchParams.get('booking_code');
         const customerId = searchParams.get('customer_id');
         
+        // Get currency conversion data
+        const convertedAmount = searchParams.get('converted_amount');
+        const exchangeRate = searchParams.get('exchange_rate') || '1.0';
+        const paymentGateway = searchParams.get('payment_gateway') || 'omise';
+        
         // Use the payment service directly
         
         const data = await PaymentService.createPaymentWith3DS({
@@ -44,7 +49,11 @@ const ChargeContent = () => {
           description: description,
           return_uri: `${window.location.origin}/payment-return?code=${bookingCode}`,
           customer_id: Number(customerId) || 0,
-          booking_code: bookingCode || ''
+          booking_code: bookingCode || '',
+          // Add currency conversion data
+          converted_amount: parseFloat(convertedAmount || '0'),
+          exchange_rate: parseFloat(exchangeRate),
+          payment_gateway: paymentGateway
         });
 
         if (data.requires_redirect && data.redirect_url) {

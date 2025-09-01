@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import FormatMoney from '@/components/common/FormatMoney';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 interface OmiseCheckoutProps {
-  amount: number; // Amount in satangs
+  amount: number; // Amount in THB (base currency)
   currency?: string;
   description?: string;
   onSuccess?: (charge: any) => void;
@@ -19,7 +20,7 @@ interface OmiseCheckoutProps {
 const OmiseCheckout: React.FC<OmiseCheckoutProps> = ({
   amount,
   currency = "thb",
-  description = "Coral Island Booking",     
+  description = process.env.NEXT_PUBLIC_PAGE_NAME,     
   onSuccess,
   onError,
   onClose,
@@ -31,6 +32,47 @@ const OmiseCheckout: React.FC<OmiseCheckoutProps> = ({
   bookingCode,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { selectedCurrency, currencyRates } = useCurrency();
+  
+  // Use the currency from props if provided, otherwise use the selected currency from context
+  const currentCurrency = selectedCurrency.code.toLowerCase() || currency;
+
+  // Convert amount to the selected currency and to the smallest unit (cents, satangs, etc.)
+  const convertAmountForOmise = (originalAmount: number, targetCurrency: string): number => {
+    // If the target currency is THB, convert to satangs (smallest unit)
+    if (targetCurrency.toLowerCase() === 'thb') {
+      return Math.round(originalAmount * 100); // Convert to satangs
+    }
+    
+    // For other currencies, we need to convert from THB to the target currency
+    if (currencyRates && currencyRates.exchange_rate) {
+      const exchangeRate = parseFloat(currencyRates.exchange_rate);
+      if (!isNaN(exchangeRate) && exchangeRate > 0) {
+        const convertedAmount = originalAmount * exchangeRate;
+        
+        // Convert to smallest unit based on currency
+        switch (targetCurrency.toLowerCase()) {
+          case 'usd':
+          case 'eur':
+          case 'gbp':
+          case 'aud':
+          case 'cad':
+          case 'sgd':
+          case 'inr':
+            return Math.round(convertedAmount * 100); // Convert to cents
+          case 'jpy':
+            return Math.round(convertedAmount); // Yen doesn't have cents
+          default:
+            return Math.round(convertedAmount * 100); // Default to cents
+        }
+      }
+    }
+    
+    // Fallback: if no exchange rate available, use original amount in satangs
+    return Math.round(originalAmount * 100);
+  };
+
+  const omiseAmount = convertAmountForOmise(amount, currentCurrency);
 
   // Load Omise script
   useEffect(() => {
@@ -46,19 +88,18 @@ const OmiseCheckout: React.FC<OmiseCheckoutProps> = ({
       (window as any).OmiseCard.configure({
         publicKey: process.env.NEXT_PUBLIC_OMISE_PUBLIC_KEY || "pkey_test_5y1vaunkvl32w0uehjq",
         image: "https://cdn.omise.co/assets/dashboard/images/omise-logo.png",
-        amount: amount,
-        currency: currency,
-        frameLabel: "Coral Island Tours",
+        amount: omiseAmount,
+        currency: currentCurrency,
+        frameLabel: process.env.NEXT_PUBLIC_PAGE_NAME,
         submitLabel: "Pay Now",
         description: description,
         buttonLabel: "Pay now", // for data-button-label
         location: "no",         // for data-location
         // otherPaymentMethods: ["promptpay"], // for data-other-payment-methods
       });
-      
       // Configure the button to submit to /charge page
       (window as any).OmiseCard.configureButton('#omise-checkout-button', {
-        frameLabel: "Coral Island Tours",
+        frameLabel: process.env.NEXT_PUBLIC_PAGE_NAME,
         submitLabel: "Pay Now",
       });
       
@@ -75,7 +116,7 @@ const OmiseCheckout: React.FC<OmiseCheckoutProps> = ({
         script.parentNode.removeChild(script);
       }
     };
-  }, [isOpen, amount, currency, description]);
+  }, [isOpen, omiseAmount, currentCurrency, description]);
 
   const handleModalClose = useCallback(() => {
     if (isLoading) return;
@@ -109,9 +150,15 @@ const OmiseCheckout: React.FC<OmiseCheckoutProps> = ({
 
         <form action="/charge">
           <input type="hidden" name="amount" value={amount} />
-          <input type="hidden" name="currency" value={currency} />
+          <input type="hidden" name="currency" value={currentCurrency} />
           <input type="hidden" name="description" value={description} />
           {bookingCode && <input type="hidden" name="booking_code" value={bookingCode} />}
+          
+          {/* Add currency conversion data */}
+          <input type="hidden" name="converted_amount" value={currencyRates && currencyRates.exchange_rate ? (amount * parseFloat(currencyRates.exchange_rate)).toFixed(2) : amount} />
+          <input type="hidden" name="exchange_rate" value={currencyRates?.exchange_rate || "1.0"} />
+          <input type="hidden" name="payment_gateway" value="omise" />
+          
           <button
             type="submit"
             id="omise-checkout-button"
