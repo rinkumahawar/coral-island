@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Card from '../base/Card';
 import Button from '../base/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,9 +23,12 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   return (
     <Card variant="activity" className="activity-card">
       <div className="h-48 overflow-hidden">
-        <img
+        <Image
           src={image}
           alt={name}
+          width={400}
+          height={192}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="w-full h-full object-cover object-top"
         />
       </div>

@@ -64,7 +64,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         images: image ? [image] : [],
       },
       alternates: {
-        canonical: `/tickets/${ticket.slug}`,
+        canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/tickets/${ticket.slug}`,
       },
     };
   } catch (error) {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Head from 'next/head';
 import { PaymentService } from '@/lib/api/services/payment';
 
 const ChargeContent = () => {
@@ -108,6 +109,9 @@ const ChargeContent = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <Head>
+        <link rel="canonical" href={`${process.env.NEXT_PUBLIC_SITE_URL}/charge`} />
+      </Head>
       <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6">
         <div className="text-center">
           <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">

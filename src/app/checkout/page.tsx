@@ -2,6 +2,7 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Head from 'next/head';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import CustomerForm from '@/components/forms/CustomerForm';
@@ -275,6 +276,9 @@ const CheckoutPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
+            <Head>
+                <link rel="canonical" href={`${process.env.NEXT_PUBLIC_SITE_URL}/checkout`} />
+            </Head>
             {showToast && (
                 <Toast
                     message={toastMessage}

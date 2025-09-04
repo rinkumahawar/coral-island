@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Head from 'next/head';
 
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -196,9 +197,12 @@ const BookingConfirmationContent: React.FC = () => {
     else if (bookingDetails.status === 'unpaid' || bookingDetails.status === 'pending') paymentStatus = 'unpaid';
     else if (bookingDetails.status === 'failed') paymentStatus = 'failed';
 
-    return (
-        <div className="min-h-screen bg-gray-50">
-            <Header />
+      return (
+    <div className="min-h-screen bg-gray-50">
+      <Head>
+        <link rel="canonical" href={`${process.env.NEXT_PUBLIC_SITE_URL}/booking-confirmation`} />
+      </Head>
+      <Header />
             <main className="container mx-auto px-6 py-8">
                 <ProgressBar steps={steps} currentStep={3} />
                 <BookingConfirmationHeader

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMinus, faCheck, faClock } from '@fortawesome/free-solid-svg-icons';
 import FormatMoney from '@/components/common/FormatMoney';
@@ -61,10 +62,12 @@ const AddOnSelection: React.FC<AddOnSelectionProps> = ({
                             <div className="flex sm:flex-col">
                                 {/* Image - Small on mobile, full width on desktop */}
                                 {/* <div className="relative w-20 h-20 sm:w-full sm:h-32 overflow-hidden flex-shrink-0">
-                                    <img
+                                    <Image
                                         src="/images/addons.jpg" 
                                         alt={addon.name}
-                                        className="w-full h-full object-cover"
+                                        fill
+                                        sizes="(max-width: 640px) 80px, 100vw"
+                                        className="object-cover"
                                     />
                                     <div className="absolute top-1 sm:top-2 right-1 sm:right-2">
                                         <span className={`px-0.5 sm:px-1 py-0.5 text-[10px] sm:text-xs font-medium rounded-full ${isAddonAvailableForTicket ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>

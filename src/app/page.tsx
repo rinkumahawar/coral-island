@@ -73,7 +73,7 @@ export async function generateMetadata(): Promise<Metadata> {
         images: [image],
       },
       alternates: {
-        canonical: '/',
+        canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/`,
       },
     };
   } catch (error) {

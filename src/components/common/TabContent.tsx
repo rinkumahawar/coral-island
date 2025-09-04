@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import Card from '../base/Card';
@@ -110,9 +111,12 @@ const TabContent: React.FC<TabContentProps> = ({
 						{/* Image Section - Left Side (only if image exists) */}
 						{img_url && (
 							<div className="md:w-1/3 flex-shrink-0">
-								<img 
+								<Image 
 									src={img_url} 
 									alt={title}
+									width={400}
+									height={256}
+									sizes="(max-width: 768px) 100vw, 33vw"
 									className="w-full h-64 md:h-auto object-cover rounded-lg shadow-md"
 								/>
 							</div>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import Head from 'next/head';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faCalendar, 
@@ -533,6 +534,9 @@ const BookingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 relative">
+      <Head>
+        <link rel="canonical" href={`${process.env.NEXT_PUBLIC_SITE_URL}/booking/${params['slug']}`} />
+      </Head>
       {/* Toast Message */}
       {showToast && (
         <div

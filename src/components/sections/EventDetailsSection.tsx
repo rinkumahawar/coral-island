@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import Card from '../base/Card';
 import BookingButton from '../common/BookingButton';
 
@@ -479,10 +480,12 @@ const EventGallery: React.FC<{ gallery: any[] }> = ({ gallery }) => (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {gallery.length > 0 ? gallery.map((img, idx) => (
         <div key={idx} className="aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-          <img 
+          <Image 
             src={img.url} 
             alt={img.alt || "Event Gallery"} 
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" 
+            fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            className="object-cover hover:scale-105 transition-transform duration-300" 
           />
         </div>
       )) : (
@@ -797,11 +800,15 @@ const EventCustomerReviews: React.FC<{ reviews: any[] }> = ({ reviews }) => {
             </button>
 
             {/* Image */}
-            <img
-              src={selectedImage.url || selectedImage}
-              alt={selectedImage.alt || 'Review image'}
-              className="max-w-full max-h-full object-contain rounded-lg"
-            />
+            <div className="relative max-w-4xl max-h-[80vh] w-full h-full">
+              <Image
+                src={selectedImage.url || selectedImage}
+                alt={selectedImage.alt || 'Review image'}
+                fill
+                sizes="100vw"
+                className="object-contain rounded-lg"
+              />
+            </div>
 
             {/* Image Info */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6 rounded-b-lg">

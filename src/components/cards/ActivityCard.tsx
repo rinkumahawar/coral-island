@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faTag } from '@fortawesome/free-solid-svg-icons';
 
@@ -21,9 +22,12 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
 }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <img
+      <Image
         src={image}
         alt={name}
+        width={400}
+        height={192}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         className="w-full h-48 object-cover"
       />
       <div className="p-6">

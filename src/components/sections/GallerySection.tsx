@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import Button from '../base/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faTimes, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -115,11 +116,13 @@ const GallerySection: React.FC<GallerySectionProps> = ({
               className="group relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105"
               onClick={() => openLightbox(image)}
             >
-              <div className="aspect-w-16 aspect-h-12 bg-gray-200">
-                <img
+              <div className="relative aspect-w-16 aspect-h-12 bg-gray-200 h-64">
+                <Image
                   src={image.src}
                   alt={image.alt}
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover group-hover:scale-110 transition-transform duration-300"
                   onError={(e) => {
                     // Fallback to a placeholder if image fails to load
                     const target = e.target as HTMLImageElement;
@@ -171,15 +174,19 @@ const GallerySection: React.FC<GallerySectionProps> = ({
             </button>
 
             {/* Image */}
-            <img
-              src={selectedImage.src}
-              alt={selectedImage.alt}
-              className="max-w-full max-h-full object-contain rounded-lg"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = `https://via.placeholder.com/800x600/4F46E5/FFFFFF?text=${encodeURIComponent(selectedImage.title)}`;
-              }}
-            />
+            <div className="relative max-w-4xl max-h-[80vh] w-full h-full">
+              <Image
+                src={selectedImage.src}
+                alt={selectedImage.alt}
+                fill
+                sizes="100vw"
+                className="object-contain rounded-lg"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = `https://via.placeholder.com/800x600/4F46E5/FFFFFF?text=${encodeURIComponent(selectedImage.title)}`;
+                }}
+              />
+            </div>
 
             {/* Image Info */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6 rounded-b-lg">
