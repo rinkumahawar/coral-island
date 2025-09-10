@@ -301,7 +301,6 @@ const TicketDetailsPage: React.FC<PageProps> = async ({ params }) => {
 
                 {/* Ticket Info */}
                 <div className="space-y-3 sm:space-y-4">
-                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">{ticket.title}</h1>
 
                   {ticket.content && (
                     <div>
