@@ -10,6 +10,9 @@ interface DateTimeSelectionProps {
     availableTimeSlots: Array<{ time: string; time_12: string }>;
     onDateChange: (date: string) => void;
     onTimeChange: (time: string) => void;
+    onMonthChange?: (visibleMonth: Date) => void;
+    availableDates?: string[]; // YYYY-MM-DD of selectable dates
+    blockedDates?: string[]; // YYYY-MM-DD of blocked dates (active=0)
     selectedTicket: EventTicket;
     adultCount: number;
     childCount: number;
@@ -21,10 +24,26 @@ const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
     availableTimeSlots,
     onDateChange,
     onTimeChange,
+    onMonthChange,
+    availableDates = [],
+    blockedDates = [],
     selectedTicket,
     adultCount,
     childCount
 }) => {
+    const toYMDLocal = (date: Date) => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    };
+
+    const parseYMDToLocalDate = (ymd: string): Date | null => {
+        if (!ymd) return null;
+        const [y, m, d] = ymd.split('-').map(Number);
+        if (!y || !m || !d) return null;
+        return new Date(y, m - 1, d);
+    };
     const timeSlots = availableTimeSlots.map(slot => {
         // Use the time_12 format directly
         return {
@@ -40,16 +59,24 @@ const DateTimeSelection: React.FC<DateTimeSelectionProps> = ({
                     <label className="block text-gray-700 mb-2 font-medium text-xs sm:text-sm lg:text-base">Tour Date</label>
                     <div className="relative">
                         <DatePicker
-                            selected={selectedDate ? new Date(selectedDate) : null}
-                            onChange={(date: Date | null) => onDateChange(date ? date.toISOString().split('T')[0] : '')}
+                            selected={selectedDate ? parseYMDToLocalDate(selectedDate) : null}
+                            onChange={(date: Date | null) => onDateChange(date ? toYMDLocal(date) : '')}
                             minDate={new Date()}
+                            filterDate={(date: Date) => {
+                                const ymd = toYMDLocal(date);
+                                if (blockedDates && blockedDates.includes(ymd)) return false;
+                                if (!availableDates || availableDates.length === 0) return true;
+                                return availableDates.includes(ymd);
+                            }}
+                            onMonthChange={(date: Date) => {
+                                if (onMonthChange) onMonthChange(date);
+                            }}
                             className="w-[100%] p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-xs sm:text-sm lg:text-base"
                             calendarClassName="custom-calendar"
-                            dayClassName={date => 
-                                date.getTime() === new Date(selectedDate).getTime() 
-                                    ? "selected-day" 
-                                    : ""
-                            }
+                            dayClassName={date => {
+                                const isSelected = selectedDate && toYMDLocal(date) === selectedDate;
+                                return isSelected ? "selected-day" : "";
+                            }}
                             dateFormat="MMMM d, yyyy"
                             placeholderText="Select a date"
                         />

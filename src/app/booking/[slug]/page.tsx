@@ -16,6 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import DateTimeSelection from '@/components/booking/DateTimeSelection';
 import { convertTo12HourFormat } from '@/utils/timeUtils';
+import { EventService, AvailabilityItem } from '@/lib/api/services/event';
 import PaxSelection from '@/components/booking/PaxSelection';
 import AddOnSelection from '@/components/booking/AddOnSelection';
 import BookingSummaryList from '@/components/booking/BookingSummaryList';
@@ -79,6 +80,9 @@ const BookingPage: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [selectedTimeObject, setSelectedTimeObject] = useState<TimeSlot | null>();
   const [timeSlots, setTimeSlots] = useState<Array<{ time: string; time_12: string }>>([]);
+  const [availableDates, setAvailableDates] = useState<string[]>([]);
+  const [blockedDates, setBlockedDates] = useState<string[]>([]);
+  const [availabilityCache, setAvailabilityCache] = useState<Record<string, AvailabilityItem>>({});
   const [adultCount, setAdultCount] = useState<number>(0);
   const [childCount, setChildCount] = useState<number>(0);
   const [totalGuests, setTotalGuests] = useState<number>(0);
@@ -118,7 +122,7 @@ const BookingPage: React.FC = () => {
       try {
         const ticketSlug = params['slug'] as string;
         const ticketResponse = await TicketService.getTicketDetails(ticketSlug);
-        setEventData(ticketResponse.event);
+        setEventData(ticketResponse?.event ?? null);
         
         // Find the ticket by slug
         if (ticketResponse) {
@@ -160,11 +164,76 @@ const BookingPage: React.FC = () => {
     fetchTicketData();
   }, [params]);
 
+  // Fetch availability for a given month range
+  const fetchAvailabilityForMonth = async (dateInMonth: Date) => {
+    if (!ticket) return;
+    const year = dateInMonth.getFullYear();
+    const month = dateInMonth.getMonth();
+    const start = new Date(year, month, 1);
+    const end = new Date(year, month + 1, 0);
+    const fmt = (d: Date) => d.toISOString().split('T')[0];
+    try {
+      const data = await EventService.getAvailability({
+        id: ticket.id,
+        start: fmt(start),
+        end: fmt(end)
+      });
+      const nextCache: Record<string, AvailabilityItem> = { ...availabilityCache };
+      const nextDates: string[] = [...availableDates];
+      const nextBlocked: string[] = [...blockedDates];
+      data.forEach(item => {
+        const key = item.start;
+        nextCache[key] = item;
+        if (item.active === 1) {
+          if (!nextDates.includes(key)) nextDates.push(key);
+        } else {
+          const idx = nextDates.indexOf(key);
+          if (idx !== -1) nextDates.splice(idx, 1);
+          if (!nextBlocked.includes(key)) nextBlocked.push(key);
+        }
+      });
+      setAvailabilityCache(nextCache);
+      setAvailableDates(nextDates);
+      setBlockedDates(nextBlocked);
+    } catch (e) {
+      // Non-blocking
+      console.warn('Failed to load availability', e);
+    }
+  };
+
+  // Initial availability load for the current month once ticket is set
+  useEffect(() => {
+    if (ticket) {
+      fetchAvailabilityForMonth(new Date());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ticket]);
+
   const handleDateChange = (date: string) => {
     setSelectedDate(date);
     setSelectedTime('');
     setSelectedTimeObject(null);
     updateBookingData({ booking_date: date, timeslot: '' });
+
+    // Populate time slots from availability if present
+    const day = availabilityCache[date];
+    if (day && day.ticket_types && day.ticket_types.length > 0) {
+      const updatedTimeSlots = day.ticket_types.map(
+        (t) => ({
+          id: t.id,
+          time: t.time_24,
+          adult_price: String(t.adult_price),
+          child_price: String(t.child_price)
+        })
+      );
+      setTicket(prev => prev ? { ...prev, time_slots: updatedTimeSlots } : prev);
+      const mapped = day.ticket_types
+        .filter(t => !t.disabled)
+        .map(t => ({ time: t.time_24, time_12: t.time }));
+      setTimeSlots(mapped);
+    } else if (ticket?.time_slots) {
+      setTimeSlots(ticket.time_slots.map(slot => convertTo12HourFormat(slot.time)));
+    }
   };
 
   const handleTimeChange = (time: string) => {
@@ -177,6 +246,10 @@ const BookingPage: React.FC = () => {
       timeslot: time,
       adult_count: ticket?.min_guest ?? 1
     });
+  };
+
+  const handleMonthChange = (visibleMonth: Date) => {
+    fetchAvailabilityForMonth(visibleMonth);
   };
 
   const handlePaxIncrement = (type: 'adult' | 'child') => {
@@ -435,6 +508,9 @@ const BookingPage: React.FC = () => {
                 availableTimeSlots={timeSlots}
                 onDateChange={handleDateChange}
                 onTimeChange={handleTimeChange}
+                onMonthChange={handleMonthChange}
+                availableDates={availableDates}
+                blockedDates={blockedDates}
                 selectedTicket={ticket as any}
                 adultCount={adultCount}
                 childCount={childCount}

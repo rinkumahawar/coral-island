@@ -4,6 +4,7 @@ export const API_CONFIG = {
     event: `page/event/${process.env.NEXT_PUBLIC_PAGE_SLUG}`,
     tickets: `page/event/${process.env.NEXT_PUBLIC_PAGE_SLUG}/tickets`,
     ticketDetails: 'page/tickets/:slug',
+    eventAvailability: 'events/load-dates',
     nationalities: 'nationalities',
     token: 'token',
     charge: 'charge',

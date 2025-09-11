@@ -142,4 +142,53 @@ export class EventService {
     );
     return response.data.data;
   }
+
+  // Availability
+  public static async getAvailability(params: {
+    id: number | string;
+    start: string; // YYYY-MM-DD
+    end: string;   // YYYY-MM-DD
+  }): Promise<AvailabilityItem[]> {
+    const query = `?id=${encodeURIComponent(params.id)}&start=${encodeURIComponent(params.start)}&end=${encodeURIComponent(params.end)}`;
+    const response = await HttpClient.get<AvailabilityResponse>(
+      `${API_CONFIG.endpoints.eventAvailability}${query}`
+    );
+    return response.data.data;
+  }
 } 
+
+// Types for Availability API
+export interface AvailabilityTicketType {
+  id: number;
+  time: string;      // e.g. "9:00 AM"
+  time_24: string;   // e.g. "09:00"
+  adult_price: number;
+  child_price: number;
+  disabled: boolean;
+}
+
+export interface AvailabilityExtraPrice {
+  label: string;
+  price: number;
+}
+
+export interface AvailabilityItem {
+  id: number;
+  active: number; // 1 or 0
+  price: number;
+  start: string; // YYYY-MM-DD
+  end: string;   // YYYY-MM-DD
+  title: string;
+  event: string;
+  ticket_types?: AvailabilityTicketType[];
+  transfer_prices?: AvailabilityExtraPrice[];
+  custom_types?: AvailabilityExtraPrice[];
+}
+
+export interface AvailabilityResponse {
+  success: boolean;
+  message: string;
+  data: AvailabilityItem[];
+  error: boolean;
+  code: number;
+}
