@@ -16,6 +16,7 @@ export const API_CONFIG = {
     paymentDetails: 'payment',
     paymentConfirm: 'payment/confirm',
     currencyRates: 'currency-rates/:currency',
+    bookingVoucher: 'booking/voucher/:code',
   },    
   defaultHeaders: {
     'Content-Type': 'application/json',

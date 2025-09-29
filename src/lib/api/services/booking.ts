@@ -80,7 +80,7 @@ export class BookingService {
   public static async getBookingVoucher(code: string): Promise<VoucherResponse> {
     try {
       const response = await HttpClient.get<ApiResponse<VoucherData>>(
-        `/booking/voucher/${code}`
+        API_CONFIG.endpoints.bookingVoucher.replace(':code', code),
       );
       return response.data;
     } catch (error: any) {
