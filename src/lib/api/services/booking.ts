@@ -1,3 +1,4 @@
+import { API_CONFIG } from '../config';
 import { HttpClient } from '../http-client';
 import { ApiResponse } from '../types';
 
@@ -50,7 +51,7 @@ export class BookingService {
   public static async createBooking(data: BookingRequest): Promise<BookingResponse> {
     try {
       const response = await HttpClient.post<ApiResponse<BookingResponse>>(
-        '/booking/create',
+        API_CONFIG.endpoints.bookingCreate,
         data
       );
       return response.data;
@@ -65,7 +66,7 @@ export class BookingService {
   public static async getBooking(bookingId: string): Promise<BookingResponse> {
     try {
       const response = await HttpClient.get<ApiResponse<BookingResponse>>(
-        `/booking/details/${bookingId}`
+        API_CONFIG.endpoints.bookingDetails.replace(':id', bookingId),
       );
       return response.data;
     } catch (error: any) {

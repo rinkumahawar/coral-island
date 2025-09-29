@@ -1,3 +1,4 @@
+import { API_CONFIG } from '../config';
 import { HttpClient } from '../http-client';
 import { ApiResponse } from '../types';
 
@@ -19,7 +20,7 @@ export class UserService {
   public static async vendorSignup(data: VendorSignupRequest): Promise<VendorSignupResponse> {
     try {
       const response = await HttpClient.post<ApiResponse<VendorSignupResponse>>(
-        '/vendor-signup',
+        API_CONFIG.endpoints.userSignup,
         data
       );
       return response.data;

@@ -82,11 +82,11 @@ const OmiseCheckout: React.FC<OmiseCheckoutProps> = ({
     script.src = "https://cdn.omise.co/omise.js";
     script.type = "text/javascript";
     document.head.appendChild(script);
-
+    
     script.onload = () => {
       // Configure OmiseCard
       (window as any).OmiseCard.configure({
-        publicKey: process.env.NEXT_PUBLIC_OMISE_PUBLIC_KEY || "pkey_test_5y1vaunkvl32w0uehjq",
+        publicKey: process.env.NEXT_PUBLIC_OMISE_PUBLIC_KEY,
         image: "https://cdn.omise.co/assets/dashboard/images/omise-logo.png",
         amount: omiseAmount,
         currency: currentCurrency,
